@@ -11,6 +11,8 @@ enum err_t
     ERR_STAT,
 };
 
+const int MAX_SIZE_WORD = 30;
+
 typedef struct hshtbl_t
 {
     size_t size_text;

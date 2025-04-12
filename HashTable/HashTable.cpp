@@ -11,13 +11,27 @@
 #include "../List/List.h"
 #include "../FreadFile/FreadFile.h"
 
+static int ID = 0;
+
 err_t HashTableCtor (char* namefile, hshtbl_t* hashtable)
 {
     printf (GRN "Start HashCtor\n" RESET);
 
     CreateBufferText (namefile, hashtable);
 
-    printf ("File Jane Osten: \n%.*s\n", (int) hashtable->size_text, hashtable->buffer_with_text);
+    char word[30] = {};
+
+    int offset = 0;
+    sscanf (hashtable->buffer_with_text, "%s%n", word, &offset);
+    ID += offset;
+
+    printf ("File Jane Osten: %s\n", word);
+
+    offset = 0;
+    sscanf (hashtable->buffer_with_text + ID, "%s%n", word, &offset);
+    ID += offset;
+
+    printf ("File Jane Osten: %s\n", word);
 
     return OK;
 }
