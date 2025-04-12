@@ -96,13 +96,34 @@ err_t LoadHashTable (hshtbl_t* hashtable)
         offset = 0;
         sscanf (hashtable->buffer_with_text + index, "%s%n", key, (int*)&offset);
 
+        if (offset == 0) break;
+
         size_t len_of_key = strlen (key);
 
         uint32_t hash = murmurhash3_32 (key, len_of_key, SEED);
 
-        if (offset == 0) break;
-
         printf (GRN "index = %lu => %.6s => %u\n" RESET, index, key, hash);
+
+        hash = hash % (uint32_t) NBASKETS;
+
+        fprintf (stderr, CYN "hash %% NBASKETS = %u\n" RESET, hash);
+
+        int    status = 0;
+
+        if (!FindInListValue (hashtable->HashTable[hash], key, &status))
+        {
+            if (status == 0)
+            {
+                fprintf (stderr, GRN "status = 0\n" RESET);
+                ListAddTail  (&(hashtable->HashTable[hash]), key);
+            }
+            else
+            {
+                fprintf (stderr, BLU "status != 0\n" RESET);
+                ListAddFairy (&(hashtable->HashTable[hash]), key);
+            }
+
+        }
 
         index += offset;
     }

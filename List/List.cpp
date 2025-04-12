@@ -27,7 +27,6 @@ errlst_t ListCtor (list_t* List)
 
     List->free = 1;
 
-    PS Pause ();
     return LIST_OK;
 }
 
@@ -138,7 +137,7 @@ errlst_t ClearList (list_t* List)
     return LIST_OK;
 }
 
-int FindInListValue (list_t List, char* value)
+int FindInListValue (list_t List, char* value, int* status)
 {
     int index = 0;
     while (1)
@@ -147,20 +146,42 @@ int FindInListValue (list_t List, char* value)
         {
             break;
         }
+
+        //fprintf (stderr, "index = %d\n", index);
+
+        if (index == 0)
+        {
+            index   = List.next[index];
+            *status = 1;
+        }
+
+        if (List.data[index] == NULL)
+        {
+            fprintf (stderr, RED "List.data[%d] == NULL\n" RESET, index);
+            break;
+        }
+
+        if (value == NULL)
+        {
+            fprintf (stderr, RED "value == NULL\n" RESET);
+            break;
+        }
+
         if (strcmp (List.data[index], value) == 0)
         {
-            printf (GRN "FindInListValue value = <%s>"  RESET, value);
-            printf (GRN "index of value <%s> = %d\n"    RESET, value, index);
+            LIST_DBG printf (GRN "FindInListValue value = <%s>\n"  RESET, value);
+            LIST_DBG printf (GRN "index of value <%s>   = %d\n"    RESET, value, index);
             return index;
         }
         else
         {
-            index = List.next[index];
+            index   = List.next[index];
+            *status = 1;
         }
     }
 
-    printf (YEL "FindInListValue value = <%s>"           RESET, value);
-    printf (YEL "value <%s> was not found in the List\n" RESET, value);
+    LIST_DBG printf (YEL "FindInListValue value = <%s>\n"         RESET, value);
+    LIST_DBG printf (YEL "value <%s> was not found in the List\n" RESET, value);
     return 0;
 }
 
