@@ -6,10 +6,10 @@
 
 typedef struct
 {
-    int* data;
-    int* next;
-    int* prev;
-    int  free;
+    char** data;
+    int*   next;
+    int*   prev;
+    int    free;
 } list_t;
 
 enum errlst_t
@@ -30,19 +30,19 @@ errlst_t ListCtor       (list_t* List);
 
 errlst_t ListDtor       (list_t* List);
 
-errlst_t ListAddAfter   (list_t* List, int anch, int value);
+errlst_t ListAddAfter   (list_t* List, int anch, char* value);
 
-errlst_t ListAddBefore  (list_t* List, int anch, int value);
+errlst_t ListAddBefore  (list_t* List, int anch, char* value);
 
-errlst_t ListAddFairy   (list_t* List, int value);
+errlst_t ListAddFairy   (list_t* List, char* value);
 
-errlst_t ListAddTail    (list_t* List, int value);
+errlst_t ListAddTail    (list_t* List, char* value);
 
 errlst_t ListDel        (list_t* List, int anch);
 
 errlst_t ClearList      (list_t* List);
 
-int      FindInListValue (list_t List, int value);
+int      FindInListValue (list_t List, char* value);
 
 void     Pause ();
 #endif

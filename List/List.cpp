@@ -1,17 +1,18 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
+#include <string.h>
 
 #include "../common/colors.h"
 #include "List.h"
 
 errlst_t ListCtor (list_t* List)
 {
-    List->data = (int*) calloc (SIZE_LIST, sizeof (int));
+    List->data = (char**) calloc (SIZE_LIST, sizeof (*List->data));
 
-    List->next = (int*) calloc (SIZE_LIST, sizeof (int));
+    List->next = (int*)  calloc (SIZE_LIST, sizeof (int));
 
-    List->prev = (int*) calloc (SIZE_LIST, sizeof (int));
+    List->prev = (int*)  calloc (SIZE_LIST, sizeof (int));
 
     for (int i = 1; i < SIZE_FREE; i++)
     {
@@ -44,7 +45,7 @@ errlst_t ListDtor (list_t* List)
     return LIST_OK;
 }
 
-errlst_t ListAddAfter (list_t* List, int anch, int value)
+errlst_t ListAddAfter (list_t* List, int anch, char* value)
 {
     if (List->prev[anch] == -1)
     {
@@ -54,7 +55,7 @@ errlst_t ListAddAfter (list_t* List, int anch, int value)
     }
 
     int indFree = List->free;
-    List->free = List->next[List->free];
+    List->free  = List->next[List->free];
 
     if (indFree == -1)
     {
@@ -66,27 +67,27 @@ errlst_t ListAddAfter (list_t* List, int anch, int value)
     List->data[indFree] = value;
 
     List->next[indFree] = List->next[anch];
-    List->next[anch] = indFree;
+    List->next[anch]    = indFree;
 
     List->prev[List->next[indFree]] = indFree;
-    List->prev[indFree] = anch;
+    List->prev[indFree]             = anch;
 
     PS Pause ();
     return LIST_OK;
 }
-errlst_t ListAddFairy (list_t* List, int value)
+errlst_t ListAddFairy (list_t* List, char* value)
 {
     errlst_t error = ListAddAfter (List, 0, value);
     return error;
 }
 
-errlst_t ListAddTail (list_t* List, int value)
+errlst_t ListAddTail (list_t* List, char* value)
 {
     errlst_t error = ListAddAfter (List, List->prev[0], value);
     return error;
 }
 
-errlst_t ListAddBefore (list_t* List, int anch, int value)
+errlst_t ListAddBefore (list_t* List, int anch, char* value)
 {
     errlst_t error = ListAddAfter (List, List->prev[anch], value);
     return error;
@@ -106,7 +107,7 @@ errlst_t ListDel (list_t* List, int anch)
         return NULL_ANCHOR;
     }
 
-    List->data[anch] *= -1;
+    List->data[anch] = NULL;
     List->next[List->prev[anch]] = List->next[anch];
     List->prev[List->next[anch]] = List->prev[anch];
 
@@ -137,7 +138,7 @@ errlst_t ClearList (list_t* List)
     return LIST_OK;
 }
 
-int FindInListValue (list_t List, int value)
+int FindInListValue (list_t List, char* value)
 {
     int index = 0;
     while (1)
@@ -146,10 +147,10 @@ int FindInListValue (list_t List, int value)
         {
             break;
         }
-        if (List.data[index] == value)
+        if (strcmp (List.data[index], value) == 0)
         {
-            printf (GRN "FindInListValue value = <%d>" RESET, value);
-            printf (GRN "index of value<%d> = %d\n"    RESET, value, index);
+            printf (GRN "FindInListValue value = <%s>"  RESET, value);
+            printf (GRN "index of value <%s> = %d\n"    RESET, value, index);
             return index;
         }
         else
@@ -158,8 +159,8 @@ int FindInListValue (list_t List, int value)
         }
     }
 
-    printf (YEL "FindInListValue value = <%d>"           RESET, value);
-    printf (YEL "value <%d> was not found in the List\n" RESET, value);
+    printf (YEL "FindInListValue value = <%s>"           RESET, value);
+    printf (YEL "value <%s> was not found in the List\n" RESET, value);
     return 0;
 }
 
