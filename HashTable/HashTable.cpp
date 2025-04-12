@@ -5,13 +5,11 @@
 #include <fcntl.h>
 #include <sys/mman.h>
 #include <unistd.h>
+#include <assert.h>
 
 #include "../common/colors.h"
 #include "HashTable.h"
 #include "../List/List.h"
-#include "../FreadFile/FreadFile.h"
-
-static int ID = 0;
 
 err_t HashTableCtor (char* namefile, hshtbl_t* hashtable)
 {
@@ -19,20 +17,30 @@ err_t HashTableCtor (char* namefile, hshtbl_t* hashtable)
 
     CreateBufferText (namefile, hashtable);
 
-    char word[30] = {};
+    fprintf (stderr, "hashtable->size_text = %lu\n", hashtable->size_text);
+    LoadHashTable (hashtable);
 
-    int offset = 0;
-    sscanf (hashtable->buffer_with_text, "%s%n", word, &offset);
-    ID += offset;
+    return OK;
+}
 
-    printf ("File Jane Osten: %s\n", word);
+err_t LoadHashTable (hshtbl_t* hashtable)
+{
+    size_t offset = 0;
+    size_t index = 0;
 
-    offset = 0;
-    sscanf (hashtable->buffer_with_text + ID, "%s%n", word, &offset);
-    ID += offset;
+    while (1)
+    {
+        char* word = (char*) calloc (MAX_SIZE_WORD, sizeof (*word));
 
-    printf ("File Jane Osten: %s\n", word);
+        offset = 0;
+        sscanf (hashtable->buffer_with_text + index, "%s%n", word, (int*)&offset);
 
+        if (offset == 0) break;
+
+        printf (GRN "index = %lu => %s\n" RESET, index, word);
+
+        index += offset;
+    }
     return OK;
 }
 

@@ -32,8 +32,5 @@ $(OBJ_DIR)/HashTable.o: HashTable/HashTable.cpp HashTable/HashTable.h List/List.
 $(OBJ_DIR)/List.o: List/List.cpp List/List.h
 	@$(CC) -c List/List.cpp -o $(OBJ_DIR)/List.o $(LINUXFLAGSDEBUG)
 
-$(OBJ_DIR)/FreadFile.o: FreadFile/FreadFile.cpp FreadFile/FreadFile.h
-	@$(CC) -c FreadFile/FreadFile.cpp -o $(OBJ_DIR)/FreadFile.o $(LINUXFLAGSDEBUG)
-
 clean:
 	rm -f main $(OBJ_DIR)/*.o

@@ -11,7 +11,8 @@ enum err_t
     ERR_STAT,
 };
 
-const int MAX_SIZE_WORD = 30;
+const int    MAX_SIZE_WORD = 30;
+const size_t NBASKETS      = 8731;
 
 typedef struct hshtbl_t
 {
@@ -20,10 +21,12 @@ typedef struct hshtbl_t
     char*  buffer_with_text;
 } hshtbl_t;
 
-err_t HashTableCtor (char* namefile, hshtbl_t* hashtable);
+err_t HashTableCtor     (char* namefile, hshtbl_t* hashtable);
 
-err_t HashTableDtor (hshtbl_t* hashtable);
+err_t HashTableDtor     (hshtbl_t* hashtable);
 
-err_t CreateBufferText (char * namefile, hshtbl_t* hashtable);
+err_t CreateBufferText  (char * namefile, hshtbl_t* hashtable);
+
+err_t LoadHashTable     (hshtbl_t* hashtable);
 
 #endif
