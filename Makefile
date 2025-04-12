@@ -20,8 +20,8 @@ BIN_DIR = ./build/bin
 
 OBJ_DIR = ./build/obj
 
-$(BIN_DIR)/a.exe: $(OBJ_DIR)/main.o $(OBJ_DIR)/HashTable.o $(OBJ_DIR)/List.o $(OBJ_DIR)/FreadFile.o
-	$(CC) $(OBJ_DIR)/main.o $(OBJ_DIR)/HashTable.o $(OBJ_DIR)/List.o $(OBJ_DIR)/FreadFile.o -o $(BIN_DIR)/a.exe $(LINUXFLAGSDEBUG)
+$(BIN_DIR)/a.exe: $(OBJ_DIR)/main.o $(OBJ_DIR)/HashTable.o $(OBJ_DIR)/List.o
+	$(CC) $(OBJ_DIR)/main.o $(OBJ_DIR)/HashTable.o $(OBJ_DIR)/List.o -o $(BIN_DIR)/a.exe $(LINUXFLAGSDEBUG)
 
 $(OBJ_DIR)/main.o: main.cpp HashTable/HashTable.h
 	@$(CC) -c main.cpp -o $(OBJ_DIR)/main.o $(LINUXFLAGSDEBUG)

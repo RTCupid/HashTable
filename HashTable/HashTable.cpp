@@ -6,6 +6,7 @@
 #include <sys/mman.h>
 #include <unistd.h>
 #include <assert.h>
+#include <string.h>
 
 #include "../common/colors.h"
 #include "HashTable.h"
@@ -17,7 +18,6 @@ err_t HashTableCtor (char* namefile, hshtbl_t* hashtable)
 
     CreateBufferText (namefile, hashtable);
 
-    fprintf (stderr, "hashtable->size_text = %lu\n", hashtable->size_text);
     LoadHashTable (hashtable);
 
     return OK;
@@ -30,18 +30,37 @@ err_t LoadHashTable (hshtbl_t* hashtable)
 
     while (1)
     {
-        char* word = (char*) calloc (MAX_SIZE_WORD, sizeof (*word));
+        char* key = (char*) calloc (MAX_SIZE_WORD, sizeof (*key));
 
         offset = 0;
-        sscanf (hashtable->buffer_with_text + index, "%s%n", word, (int*)&offset);
+        sscanf (hashtable->buffer_with_text + index, "%s%n", key, (int*)&offset);
+
+        size_t len_of_key = strlen (key);
+
+        uint32_t hash = murmurhash3_32 (key, len_of_key, SEED);
 
         if (offset == 0) break;
 
-        printf (GRN "index = %lu => %s\n" RESET, index, word);
+        printf (GRN "index = %lu => %.6s => %lu\n" RESET, index, key, hash);
 
         index += offset;
     }
     return OK;
+}
+
+uint32_t murmurhash3_32 (const void* key, size_t len, uint32_t seed)
+{
+    const    uint8_t* data = (const uint8_t*)key;
+    uint32_t hash          = seed;
+
+    for (size_t i = 0; i < len; i++)
+    {
+        hash ^= data[i];
+        hash  = (hash << 13) | (hash >> 19);
+        hash  = hash * 0x5bd1e995 + 0x165667b1;
+    }
+
+    return hash;
 }
 
 err_t CreateBufferText (char * namefile, hshtbl_t* hashtable)
