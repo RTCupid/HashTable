@@ -16,6 +16,8 @@ err_t HashTableCtor (char* namefile, hshtbl_t* hashtable)
 {
     printf           (GRN "Start HashCtor\n" RESET);
 
+    hashtable->log_file = fopen ("build/log_file.txt", "wt");
+
     CreateBufferText (namefile, hashtable);
 
     CreateHashTable  (hashtable);
@@ -28,22 +30,24 @@ err_t HashTableCtor (char* namefile, hshtbl_t* hashtable)
 
     char* key = "Mikhalina luchshaya";
 
-    SearchHashTable (key);
+    SearchHashTable (hashtable, key);
 
     return OK;
 }
 
-err_t SearchHashTable (key_t key)
+err_t SearchHashTable (hshtbl_t* hashtable, my_key_t key)
 {
     size_t len_of_key = strlen (key);
 
     uint32_t hash = murmurhash3_32 (key, len_of_key, SEED);
 
-    printf (GRN "index = %lu => %.6s => %u\n" RESET, index, key, hash);
+    printf  (GRN "key \"%.6s\" => hash =  %u\n" RESET, key, hash);
+    fprintf (hashtable->log_file, "key \"%.6s\" => hash =  %u\n", key, hash);
 
     hash = hash % (uint32_t) NBASKETS;
 
-    fprintf (stderr, CYN "hash %% NBASKETS = %u\n" RESET, hash);
+    printf (CYN "hash %% NBASKETS = %u\n" RESET, hash);
+    fprintf (hashtable->log_file, "hash %% NBASKETS = %u\n", hash);
 
     int    status = 0;
 
@@ -51,16 +55,26 @@ err_t SearchHashTable (key_t key)
     {
         if (status == 0)
         {
-            fprintf (stderr, GRN "status = 0\n" RESET);
+            fprintf (hashtable->log_file, "status = 0\n");
+            printf (MAG "FindInListValue value = <%s>\n"         RESET, key);
+            printf (MAG "value <%s> was not found in the List\n" RESET, key);
             ListAddTail  (&(hashtable->HashTable[hash]), key);
+
+            return OK;
         }
         else
         {
-            fprintf (stderr, BLU "status != 0\n" RESET);
+            fprintf (hashtable->log_file, "status != 0\n");
+            printf (MAG "FindInListValue value = <%s>\n"         RESET, key);
+            printf (MAG "value <%s> was not found in the List\n" RESET, key);
             ListAddFairy (&(hashtable->HashTable[hash]), key);
+
+            return OK;
         }
     }
 
+    printf (YEL "FindInListValue value = <%s>\n"      RESET, key);
+    printf (YEL "value <%s> was found in %u Basket\n" RESET, key, hash);
 
     return OK;
 }
@@ -145,32 +159,7 @@ err_t LoadHashTable (hshtbl_t* hashtable)
 
         if (offset == 0) break;
 
-        size_t len_of_key = strlen (key);
-
-        uint32_t hash = murmurhash3_32 (key, len_of_key, SEED);
-
-        printf (GRN "index = %lu => %.6s => %u\n" RESET, index, key, hash);
-
-        hash = hash % (uint32_t) NBASKETS;
-
-        fprintf (stderr, CYN "hash %% NBASKETS = %u\n" RESET, hash);
-
-        int    status = 0;
-
-        if (!FindInListValue (hashtable->HashTable[hash], key, &status))
-        {
-            if (status == 0)
-            {
-                fprintf (stderr, GRN "status = 0\n" RESET);
-                ListAddTail  (&(hashtable->HashTable[hash]), key);
-            }
-            else
-            {
-                fprintf (stderr, BLU "status != 0\n" RESET);
-                ListAddFairy (&(hashtable->HashTable[hash]), key);
-            }
-
-        }
+        SearchHashTable (hashtable, key);
 
         index += offset;
     }

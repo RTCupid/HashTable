@@ -2,7 +2,7 @@
 #define LIST_H
 
 #define PS if(0)
-#define LIST_DBG if(1)
+#define LIST_DBG if(0)
 
 typedef struct
 {

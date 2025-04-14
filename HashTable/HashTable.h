@@ -31,9 +31,10 @@ typedef struct hshtbl_t
     int       buffer_with_text_id;
     char*     buffer_with_text;
     list_t*   HashTable;
+    FILE*     log_file;
 } hshtbl_t;
 
-typedef key_t char*;
+typedef char* my_key_t;
 
 err_t       HashTableCtor     (char* namefile, hshtbl_t* hashtable);
 
@@ -53,6 +54,6 @@ err_t       PrintHashTable    (hshtbl_t hashtable, mode_print_hashtable_t mode);
 
 err_t       PrintList         (list_t list);
 
-err_t       SearchHashTable   (key_t element);
+err_t       SearchHashTable   (hshtbl_t* hashtable, my_key_t key);
 
 #endif

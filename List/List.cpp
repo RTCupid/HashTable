@@ -142,7 +142,7 @@ int FindInListValue (list_t List, char* value, int* status)
     int index = 0;
     while (1)
     {
-        //fprintf (stderr, "index = %d\n", index);
+        LIST_DBG fprintf (stderr, "index = %d\n", index);
 
         if (index == 0)
         {
@@ -152,7 +152,7 @@ int FindInListValue (list_t List, char* value, int* status)
             }
 
             index   = List.next[index];
-            //fprintf (stderr, MAG "index changed! index = %d\n", index);
+            LIST_DBG fprintf (stderr, MAG "index changed! index = %d\n", index);
             *status = 1;
         }
 
@@ -168,12 +168,12 @@ int FindInListValue (list_t List, char* value, int* status)
             break;
         }
 
-        //fprintf (stderr, "Start strcmp\n");
+        LIST_DBG fprintf (stderr, "Start strcmp\n");
 
         if (strcmp (List.data[index], value) == 0)
         {
-            //LIST_DBG printf (GRN "FindInListValue value = <%s>\n"  RESET, value);
-            //LIST_DBG printf (GRN "index of value <%s>   = %d\n"    RESET, value, index);
+            LIST_DBG LIST_DBG printf (GRN "FindInListValue value = <%s>\n"  RESET, value);
+            LIST_DBG LIST_DBG printf (GRN "index of value <%s>   = %d\n"    RESET, value, index);
             return index;
         }
         else
@@ -188,8 +188,8 @@ int FindInListValue (list_t List, char* value, int* status)
         }
     }
 
-    //LIST_DBG printf (YEL "FindInListValue value = <%s>\n"         RESET, value);
-    //LIST_DBG printf (YEL "value <%s> was not found in the List\n" RESET, value);
+    LIST_DBG printf (YEL "FindInListValue value = <%s>\n"         RESET, value);
+    LIST_DBG printf (YEL "value <%s> was not found in the List\n" RESET, value);
     return 0;
 }
 
