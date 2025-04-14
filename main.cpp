@@ -3,7 +3,6 @@
 #include "common/colors.h"
 #include "HashTable/HashTable.h"
 
-
 int main (int argc, char* argv[])
 {
     printf (GRN "# My  Hash Table\n" RESET);

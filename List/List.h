@@ -23,7 +23,7 @@ enum errlst_t
     LIST_IS_LOOP,
 };
 
-const int SIZE_LIST = 20;
+const int SIZE_LIST = 30;
 const int SIZE_FREE = SIZE_LIST - 1;
 
 errlst_t ListCtor       (list_t* List);

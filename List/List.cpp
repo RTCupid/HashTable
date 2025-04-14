@@ -122,7 +122,9 @@ errlst_t ClearList (list_t* List)
 {
     for (int i = 1; i < SIZE_FREE; i++)
     {
-        List->data[i] = 0;
+        LIST_DBG fprintf (stderr, "clear %d key\n", i);
+        free (List->data[i]);
+        List->data[i] = NULL;
         List->next[i] = i + 1;
         List->prev[i] = -1;
     }

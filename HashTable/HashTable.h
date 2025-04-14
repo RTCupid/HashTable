@@ -5,6 +5,8 @@
 
 #include "../List/List.h"
 
+#define HASHTABLE_DBG if(0)
+
 enum err_t
 {
     OK,
@@ -39,6 +41,8 @@ typedef char* my_key_t;
 err_t       HashTableCtor     (char* namefile, hshtbl_t* hashtable);
 
 err_t       HashTableDtor     (hshtbl_t* hashtable);
+
+err_t       ClearHashTable    (hshtbl_t* hashtable);
 
 err_t       CreateBufferText  (char * namefile, hshtbl_t* hashtable);
 
