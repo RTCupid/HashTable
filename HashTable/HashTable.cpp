@@ -24,6 +24,8 @@ err_t HashTableCtor (char* namefile, hshtbl_t* hashtable)
 
     LoadHashTable    (hashtable);
 
+
+
     return OK;
 }
 
