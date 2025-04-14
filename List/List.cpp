@@ -142,16 +142,17 @@ int FindInListValue (list_t List, char* value, int* status)
     int index = 0;
     while (1)
     {
-        if (List.next[index] == 0)
-        {
-            break;
-        }
-
-        //fprintf (stderr, "index = %d\n", index);
+        fprintf (stderr, "index = %d\n", index);
 
         if (index == 0)
         {
+            if (List.next[index] == 0)
+            {
+                break;
+            }
+
             index   = List.next[index];
+            fprintf (stderr, MAG "index changed! index = %d\n", index);
             *status = 1;
         }
 
@@ -167,6 +168,8 @@ int FindInListValue (list_t List, char* value, int* status)
             break;
         }
 
+        fprintf (stderr, "Start strcmp\n");
+
         if (strcmp (List.data[index], value) == 0)
         {
             LIST_DBG printf (GRN "FindInListValue value = <%s>\n"  RESET, value);
@@ -175,6 +178,11 @@ int FindInListValue (list_t List, char* value, int* status)
         }
         else
         {
+            if (List.next[index] == 0)
+            {
+                break;
+            }
+
             index   = List.next[index];
             *status = 1;
         }
