@@ -22,7 +22,7 @@ enum mode_print_hashtable_t
 };
 
 const int      MAX_SIZE_WORD = 30;
-const size_t   NBASKETS      = 8731;
+const size_t   NBASKETS      = 761;
 const uint32_t SEED          = 0xEDABC526;
 
 typedef struct hshtbl_t
@@ -32,6 +32,8 @@ typedef struct hshtbl_t
     char*     buffer_with_text;
     list_t*   HashTable;
 } hshtbl_t;
+
+typedef key_t char*;
 
 err_t       HashTableCtor     (char* namefile, hshtbl_t* hashtable);
 
@@ -50,5 +52,7 @@ uint32_t    murmurhash3_32    (const void* key, size_t len, uint32_t seed);
 err_t       PrintHashTable    (hshtbl_t hashtable, mode_print_hashtable_t mode);
 
 err_t       PrintList         (list_t list);
+
+err_t       SearchHashTable   (key_t element);
 
 #endif

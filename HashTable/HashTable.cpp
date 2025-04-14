@@ -24,6 +24,42 @@ err_t HashTableCtor (char* namefile, hshtbl_t* hashtable)
 
     LoadHashTable    (hashtable);
 
+    DumpHashTable    (*hashtable, KEYS);
+
+    char* key = "Mikhalina luchshaya";
+
+    SearchHashTable (key);
+
+    return OK;
+}
+
+err_t SearchHashTable (key_t key)
+{
+    size_t len_of_key = strlen (key);
+
+    uint32_t hash = murmurhash3_32 (key, len_of_key, SEED);
+
+    printf (GRN "index = %lu => %.6s => %u\n" RESET, index, key, hash);
+
+    hash = hash % (uint32_t) NBASKETS;
+
+    fprintf (stderr, CYN "hash %% NBASKETS = %u\n" RESET, hash);
+
+    int    status = 0;
+
+    if (!FindInListValue (hashtable->HashTable[hash], key, &status))
+    {
+        if (status == 0)
+        {
+            fprintf (stderr, GRN "status = 0\n" RESET);
+            ListAddTail  (&(hashtable->HashTable[hash]), key);
+        }
+        else
+        {
+            fprintf (stderr, BLU "status != 0\n" RESET);
+            ListAddFairy (&(hashtable->HashTable[hash]), key);
+        }
+    }
 
 
     return OK;
@@ -79,9 +115,18 @@ err_t PrintHashTable (hshtbl_t hashtable, mode_print_hashtable_t mode)
 
 err_t PrintList (list_t list)
 {
-    for (size_t index = 0; list.next[index] != -1; index = (size_t) list.next[index])
+    for (size_t index = 0; list.next[index] != -1;)
     {
         fprintf (stderr, CYN "list.data[%lu] = %s\n" RESET, index, list.data[index]);
+
+        if (list.next[index] == 0)
+        {
+            break;
+        }
+        else
+        {
+            index = (size_t) list.next[index];
+        }
     }
     return OK;
 }
