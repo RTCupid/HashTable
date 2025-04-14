@@ -23,11 +23,7 @@ err_t HashTableCtor (char* namefile, hshtbl_t* hashtable)
 
     CreateHashTable  (hashtable);
 
-    DumpHashTable    (*hashtable, POINTERS);
-
     LoadHashTable    (hashtable);
-
-    DumpHashTable    (*hashtable, KEYS);
 
     return OK;
 }
@@ -83,10 +79,10 @@ err_t SearchHashTable (hshtbl_t* hashtable, my_key_t key, mode_hashtable_t mode)
         {
             fprintf (hashtable->log_file, "status = 0\n");
 
-            printf  (MAG                  "FindInListValue value = <%s>\n" RESET, key);
+            HASHTABLE_DBG printf  (MAG                  "FindInListValue value = <%s>\n" RESET, key);
             fprintf (hashtable->log_file, "FindInListValue value = <%s>\n",       key);
 
-            printf  (MAG                  "value <%s> was not found in the List\n" RESET, key);
+            HASHTABLE_DBG printf  (MAG                  "value <%s> was not found in the List\n" RESET, key);
             fprintf (hashtable->log_file, "value <%s> was not found in the List\n",       key);
 
             if (mode == LOAD)
@@ -105,10 +101,10 @@ err_t SearchHashTable (hshtbl_t* hashtable, my_key_t key, mode_hashtable_t mode)
         {
             fprintf (hashtable->log_file, "status != 0\n");
 
-            printf  (MAG                  "FindInListValue value = <%s>\n" RESET, key);
+            HASHTABLE_DBG printf  (MAG                  "FindInListValue value = <%s>\n" RESET, key);
             fprintf (hashtable->log_file, "FindInListValue value = <%s>\n",       key);
 
-            printf  (MAG                  "value <%s> was not found in the List\n" RESET, key);
+            HASHTABLE_DBG printf  (MAG                  "value <%s> was not found in the List\n" RESET, key);
             fprintf (hashtable->log_file, "value <%s> was not found in the List\n",       key);
 
             if (mode == LOAD)
@@ -242,10 +238,12 @@ err_t ClearHashTable (hshtbl_t* hashtable)
 {
     for (size_t index = 0; index < NBASKETS; index++)
     {
-        fprintf   (stderr, YEL "start clear %lu list\n" RESET, index);
+        HASHTABLE_DBG fprintf (stderr, YEL "start clear %lu list\n" RESET, index);
+
         ClearList (&hashtable->HashTable[index]);
         ListDtor  (&hashtable->HashTable[index]);
-        fprintf   (stderr, GRN "end   clear %lu list\n" RESET, index);
+
+        HASHTABLE_DBG fprintf (stderr, GRN "end   clear %lu list\n" RESET, index);
     }
 
     free (hashtable->HashTable);
