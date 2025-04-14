@@ -120,7 +120,12 @@ err_t LoadHashTable (hshtbl_t* hashtable)
         offset = 0;
         sscanf (hashtable->buffer_with_text + index, "%s%n", key, (int*)&offset);
 
-        if (offset == 0) break;
+        if (offset == 0)
+        {
+            free (key);
+            key = NULL;
+            break;
+        }
 
         SearchHashTable (hashtable, key);
 
