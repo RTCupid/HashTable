@@ -34,22 +34,46 @@ err_t HashTableCtor (char* namefile, hshtbl_t* hashtable)
 
 err_t RunHashTable (hshtbl_t* hashtable, char* name_test_file)
 {
+    CreateBufferText (name_test_file, &(hashtable->size_test_text), &(hashtable->buffer_with_test_text_id), &(hashtable->buffer_with_test_text));
+
+    size_t offset = 0;
+    size_t index = 0;
+
+    while (1)
+    {
+        char* key = (char*) calloc (MAX_SIZE_WORD, sizeof (*key));
+
+        offset = 0;
+        sscanf (hashtable->buffer_with_test_text + index, "%s%n", key, (int*)&offset);
+
+        if (offset == 0)
+        {
+            free (key);
+            key = NULL;
+            break;
+        }
+
+        SearchHashTable (hashtable, key, TEST);
+
+        index += offset;
+    }
+
     return OK;
 }
 
-err_t SearchHashTable (hshtbl_t* hashtable, my_key_t key)
+err_t SearchHashTable (hshtbl_t* hashtable, my_key_t key, mode_hashtable_t mode)
 {
     size_t len_of_key = strlen (key);
 
-    uint32_t hash = murmurhash3_32 (key, len_of_key, SEED);
+    uint32_t hash     = murmurhash3_32 (key, len_of_key, SEED);
 
     HASHTABLE_DBG printf  (GRN "key \"%.6s\" => hash =  %u\n" RESET, key, hash);
-    fprintf (hashtable->log_file, "key \"%.6s\" => hash =  %u\n", key, hash);
+    fprintf               (hashtable->log_file, "key \"%.6s\" => hash =  %u\n", key, hash);
 
     hash = hash % (uint32_t) NBASKETS;
 
     HASHTABLE_DBG printf (CYN "hash %% NBASKETS = %u\n" RESET, hash);
-    fprintf (hashtable->log_file, "hash %% NBASKETS = %u\n", hash);
+    fprintf              (hashtable->log_file, "hash %% NBASKETS = %u\n", hash);
 
     int    status = 0;
 
@@ -59,13 +83,21 @@ err_t SearchHashTable (hshtbl_t* hashtable, my_key_t key)
         {
             fprintf (hashtable->log_file, "status = 0\n");
 
-            HASHTABLE_DBG printf  (MAG                  "FindInListValue value = <%s>\n" RESET, key);
+            printf  (MAG                  "FindInListValue value = <%s>\n" RESET, key);
             fprintf (hashtable->log_file, "FindInListValue value = <%s>\n",       key);
 
-            HASHTABLE_DBG printf  (MAG                  "value <%s> was not found in the List\n" RESET, key);
+            printf  (MAG                  "value <%s> was not found in the List\n" RESET, key);
             fprintf (hashtable->log_file, "value <%s> was not found in the List\n",       key);
 
-            ListAddTail  (&(hashtable->HashTable[hash]), key);
+            if (mode == LOAD)
+            {
+                ListAddTail  (&(hashtable->HashTable[hash]), key);
+            }
+            else
+            {
+                free (key);
+                key = NULL;
+            }
 
             return OK;
         }
@@ -73,13 +105,21 @@ err_t SearchHashTable (hshtbl_t* hashtable, my_key_t key)
         {
             fprintf (hashtable->log_file, "status != 0\n");
 
-            HASHTABLE_DBG printf  (MAG                  "FindInListValue value = <%s>\n" RESET, key);
+            printf  (MAG                  "FindInListValue value = <%s>\n" RESET, key);
             fprintf (hashtable->log_file, "FindInListValue value = <%s>\n",       key);
 
-            HASHTABLE_DBG printf  (MAG                  "value <%s> was not found in the List\n" RESET, key);
+            printf  (MAG                  "value <%s> was not found in the List\n" RESET, key);
             fprintf (hashtable->log_file, "value <%s> was not found in the List\n",       key);
 
-            ListAddFairy (&(hashtable->HashTable[hash]), key);
+            if (mode == LOAD)
+            {
+                ListAddFairy (&(hashtable->HashTable[hash]), key);
+            }
+            else
+            {
+                free (key);
+                key = NULL;
+            }
 
             return OK;
         }
@@ -128,7 +168,7 @@ err_t LoadHashTable (hshtbl_t* hashtable)
             break;
         }
 
-        SearchHashTable (hashtable, key);
+        SearchHashTable (hashtable, key, LOAD);
 
         index += offset;
     }

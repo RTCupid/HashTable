@@ -17,6 +17,12 @@ enum err_t
     ERR_STAT,
 };
 
+enum mode_hashtable_t
+{
+    TEST,
+    LOAD,
+};
+
 enum mode_print_hashtable_t
 {
     POINTERS,
@@ -32,6 +38,9 @@ typedef struct hshtbl_t
     size_t    size_text;
     int       buffer_with_text_id;
     char*     buffer_with_text;
+    size_t    size_test_text;
+    int       buffer_with_test_text_id;
+    char*     buffer_with_test_text;
     list_t*   HashTable;
     FILE*     log_file;
 } hshtbl_t;
@@ -52,7 +61,7 @@ err_t       LoadHashTable     (hshtbl_t* hashtable);
 
 uint32_t    murmurhash3_32    (const void* key, size_t len, uint32_t seed);
 
-err_t       SearchHashTable   (hshtbl_t* hashtable, my_key_t key);
+err_t       SearchHashTable   (hshtbl_t* hashtable, my_key_t key, mode_hashtable_t mode);
 
 err_t       RunHashTable      (hshtbl_t* hashtable, char* name_test_file);
 
