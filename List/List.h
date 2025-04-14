@@ -4,7 +4,7 @@
 #define PS if(0)
 #define LIST_DBG if(0)
 
-typedef struct
+typedef struct list_t
 {
     char** data;
     int*   next;

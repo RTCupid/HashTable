@@ -44,15 +44,9 @@ err_t       CreateBufferText  (char * namefile, hshtbl_t* hashtable);
 
 err_t       CreateHashTable   (hshtbl_t* hashtable);
 
-err_t       DumpHashTable     (hshtbl_t hashtable, mode_print_hashtable_t mode);
-
 err_t       LoadHashTable     (hshtbl_t* hashtable);
 
 uint32_t    murmurhash3_32    (const void* key, size_t len, uint32_t seed);
-
-err_t       PrintHashTable    (hshtbl_t hashtable, mode_print_hashtable_t mode);
-
-err_t       PrintList         (list_t list);
 
 err_t       SearchHashTable   (hshtbl_t* hashtable, my_key_t key);
 
