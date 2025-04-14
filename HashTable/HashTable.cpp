@@ -19,7 +19,7 @@ err_t HashTableCtor (char* namefile, hshtbl_t* hashtable)
 
     hashtable->log_file = fopen ("build/log_file.txt", "wt");
 
-    CreateBufferText (namefile, hashtable);
+    CreateBufferText (namefile, &(hashtable->size_text), &(hashtable->buffer_with_text_id), &(hashtable->buffer_with_text));
 
     CreateHashTable  (hashtable);
 
@@ -29,10 +29,11 @@ err_t HashTableCtor (char* namefile, hshtbl_t* hashtable)
 
     DumpHashTable    (*hashtable, KEYS);
 
-    //char* key = "Mikhalina luchshaya";
+    return OK;
+}
 
-    //SearchHashTable (hashtable, key);
-
+err_t RunHashTable (hshtbl_t* hashtable, char* name_test_file)
+{
     return OK;
 }
 
@@ -149,10 +150,10 @@ uint32_t murmurhash3_32 (const void* key, size_t len, uint32_t seed)
     return hash;
 }
 
-err_t CreateBufferText (char * namefile, hshtbl_t* hashtable)
+err_t CreateBufferText  (char * namefile, size_t* size_text, int* buffer_with_text_id, char** buffer_with_text)
 {
-    hashtable->buffer_with_text_id = open (namefile, O_RDONLY);
-    if (hashtable->buffer_with_text_id == -1)
+    *buffer_with_text_id = open (namefile, O_RDONLY);
+    if (*buffer_with_text_id == -1)
     {
         perror ("open");
         return ERR_OPEN;
@@ -167,12 +168,12 @@ err_t CreateBufferText (char * namefile, hshtbl_t* hashtable)
         return ERR_STAT;
     }
 
-    hashtable->size_text = (size_t) fileInf.st_size + 1;
+    *size_text = (size_t) fileInf.st_size + 1;
 
-    hashtable->buffer_with_text = (char*) mmap (NULL, hashtable->size_text, PROT_READ, MAP_PRIVATE,
-                                                      hashtable->buffer_with_text_id, 0);
+    *buffer_with_text = (char*) mmap (NULL, *size_text, PROT_READ, MAP_PRIVATE,
+                                                      *buffer_with_text_id, 0);
 
-    if (hashtable->buffer_with_text == MAP_FAILED)
+    if (*buffer_with_text == MAP_FAILED)
     {
         perror ("mmap");
         return ERR_MMAP;

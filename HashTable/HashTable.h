@@ -44,7 +44,7 @@ err_t       HashTableDtor     (hshtbl_t* hashtable);
 
 err_t       ClearHashTable    (hshtbl_t* hashtable);
 
-err_t       CreateBufferText  (char * namefile, hshtbl_t* hashtable);
+err_t       CreateBufferText  (char * namefile, size_t* size_text, int* buffer_with_text_id, char** buffer_with_text);
 
 err_t       CreateHashTable   (hshtbl_t* hashtable);
 
@@ -53,5 +53,7 @@ err_t       LoadHashTable     (hshtbl_t* hashtable);
 uint32_t    murmurhash3_32    (const void* key, size_t len, uint32_t seed);
 
 err_t       SearchHashTable   (hshtbl_t* hashtable, my_key_t key);
+
+err_t       RunHashTable      (hshtbl_t* hashtable, char* name_test_file);
 
 #endif

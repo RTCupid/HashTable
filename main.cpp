@@ -20,6 +20,8 @@ int main (int argc, char* argv[])
         HashTableCtor (argv[1], &hashtable);
     }
 
+    RunHashTable (&hashtable, argv[2]);
+
     HashTableDtor (&hashtable);
 
     return 0;
