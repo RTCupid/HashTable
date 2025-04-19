@@ -8,7 +8,7 @@
 - [5. Appendix](#appendix)
 
 ## Annotation
-I solve this task used hash table. Finding spend xx s in the first version. With optimization keys this version spend 123 s. I checked profile of execution my program to find functions that spend many time. 
+I solved this task used hash table. Finding spend xx s in the first version. With optimization keys this version spend 123 s. I checked profile of execution my program to find functions that spend many time. 
 
 
 ## Introduction
