@@ -1,3 +1,4 @@
+#include <time.h>
 #include <stdio.h>
 
 #include "common/colors.h"
@@ -5,8 +6,8 @@
 
 int main (int argc, char* argv[])
 {
-    printf (GRN "# My  Hash Table\n" RESET);
-    printf (GRN "# (c) RTCupid, 2024\n\n" RESET);
+    printf (GRN "### My  Hash Table\n" RESET);
+    printf (GRN "### (c) RTCupid, 2024\n\n" RESET);
 
     for (int i = 0; i < argc; i++)
     {
@@ -15,14 +16,34 @@ int main (int argc, char* argv[])
 
     hshtbl_t hashtable = {};
 
-    if (argc > 1)
+    if (argc > 2)
     {
-        HashTableCtor (argv[1], &hashtable);
+        CreateBufferText (argv[1], &(hashtable.size_text), &(hashtable.buffer_with_text_id), &(hashtable.buffer_with_text));
+
+        HashTableCtor    (&hashtable);
+
+        LoadHashTable    (&hashtable);
+
+        clock_t start_program_time = clock ();
+
+        RunHashTable     (&hashtable, argv[2]);
+
+        clock_t end_program_time   = clock ();
+
+        HashTableDtor    (&hashtable);
+
+        double cpu_time_used       = ((double) (end_program_time - start_program_time)) / CLOCKS_PER_SEC;
+
+        printf ("Search spent time: %f s\n", cpu_time_used);
+    }
+    else
+    {
+        fprintf (stderr, RED "Enter file fot loading hash table as first cmd line arg\n" RESET);
+
+        fprintf (stderr, RED "Enter file for search in hash table as second cmd line arg\n" RESET);
+        return 0;
     }
 
-    RunHashTable (&hashtable, argv[2]);
-
-    HashTableDtor (&hashtable);
-
+    printf (GRN "### End of program \n\n" RESET);
     return 0;
 }

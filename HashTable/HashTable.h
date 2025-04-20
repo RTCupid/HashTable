@@ -30,7 +30,7 @@ enum mode_print_hashtable_t
 };
 
 const int      MAX_SIZE_WORD = 30;
-const size_t   NBASKETS      = 761;
+const size_t   NBASKETS      = 409;
 const uint32_t SEED          = 0xEDABC526;
 
 typedef struct hshtbl_t
@@ -47,7 +47,7 @@ typedef struct hshtbl_t
 
 typedef char* my_key_t;
 
-err_t       HashTableCtor     (char* namefile, hshtbl_t* hashtable);
+err_t       HashTableCtor     (hshtbl_t* hashtable);
 
 err_t       HashTableDtor     (hshtbl_t* hashtable);
 

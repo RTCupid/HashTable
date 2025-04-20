@@ -13,17 +13,13 @@
 #include "../List/List.h"
 #include "DumpHashTable.h"
 
-err_t HashTableCtor (char* namefile, hshtbl_t* hashtable)
+err_t HashTableCtor (hshtbl_t* hashtable)
 {
     printf           (GRN "Start HashCtor\n" RESET);
 
     hashtable->log_file = fopen ("build/log_file.txt", "wt");
 
-    CreateBufferText (namefile, &(hashtable->size_text), &(hashtable->buffer_with_text_id), &(hashtable->buffer_with_text));
-
     CreateHashTable  (hashtable);
-
-    LoadHashTable    (hashtable);
 
     return OK;
 }
