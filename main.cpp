@@ -25,18 +25,22 @@ int main (int argc, char* argv[])
 
         LoadHashTable    (&hashtable);
 
-        DumpHashTable (hashtable, KEYS);
+        //DumpHashTable (hashtable, KEYS);
 
         printf (GRN "## Start searching:\n" RESET);
 
+        CreateBufferText (argv[2], &(hashtable.size_test_text), &(hashtable.buffer_with_test_text_id), &(hashtable.buffer_with_test_text));
+
         clock_t start_program_time = clock ();
-                                                    //;-------------------------|
-        RunHashTable     (&hashtable, argv[2]);     //; Searching words in text |
-        RunHashTable     (&hashtable, argv[2]);     //;                         |
-                                                    //;--------------------------
+
+        for (size_t times = 0; times < NTIMES; times++)
+        {
+            RunHashTable     (&hashtable);
+        }
+
         clock_t end_program_time   = clock ();
 
-        DumpHashTable (hashtable, KEYS);
+        //DumpHashTable (hashtable, KEYS);
 
         HashTableDtor    (&hashtable);
 

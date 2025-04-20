@@ -26,10 +26,8 @@ err_t HashTableCtor (hshtbl_t* hashtable)
     return OK;
 }
 
-err_t RunHashTable (hshtbl_t* hashtable, char* name_test_file)
+err_t RunHashTable (hshtbl_t* hashtable)
 {
-    CreateBufferText (name_test_file, &(hashtable->size_test_text), &(hashtable->buffer_with_test_text_id), &(hashtable->buffer_with_test_text));
-
     size_t offset = 0;
     size_t index = 0;
 
