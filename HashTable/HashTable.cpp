@@ -15,7 +15,7 @@
 
 err_t HashTableCtor (hshtbl_t* hashtable)
 {
-    printf           (GRN "Start HashCtor\n" RESET);
+    printf           (GRN "## Start HashCtor\n" RESET);
 
     hashtable->log_file = fopen ("build/log_file.txt", "wt");
 

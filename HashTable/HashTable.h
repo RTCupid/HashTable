@@ -30,7 +30,7 @@ enum mode_print_hashtable_t
 };
 
 const int      MAX_SIZE_WORD = 30;
-const size_t   NBASKETS      = 409;
+const size_t   NBASKETS      = 1559;
 const uint32_t SEED          = 0xEDABC526;
 
 typedef struct hshtbl_t

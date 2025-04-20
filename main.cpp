@@ -3,6 +3,7 @@
 
 #include "common/colors.h"
 #include "HashTable/HashTable.h"
+#include "HashTable/DumpHashTable.h"
 
 int main (int argc, char* argv[])
 {
@@ -24,17 +25,20 @@ int main (int argc, char* argv[])
 
         LoadHashTable    (&hashtable);
 
+        printf (GRN "## Start searching:\n" RESET);
+
         clock_t start_program_time = clock ();
-
-        RunHashTable     (&hashtable, argv[2]);
-
+                                                    //;-------------------------|
+        RunHashTable     (&hashtable, argv[2]);     //; Searching words in text |
+        RunHashTable     (&hashtable, argv[2]);     //;                         |
+                                                    //;--------------------------
         clock_t end_program_time   = clock ();
 
         HashTableDtor    (&hashtable);
 
         double cpu_time_used       = ((double) (end_program_time - start_program_time)) / CLOCKS_PER_SEC;
 
-        printf ("Search spent time: %f s\n", cpu_time_used);
+        printf ("Search time: %f s\n", cpu_time_used);
     }
     else
     {
