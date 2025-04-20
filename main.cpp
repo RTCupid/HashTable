@@ -36,6 +36,8 @@ int main (int argc, char* argv[])
                                                     //;--------------------------
         clock_t end_program_time   = clock ();
 
+        DumpHashTable (hashtable, KEYS);
+
         HashTableDtor    (&hashtable);
 
         double cpu_time_used       = ((double) (end_program_time - start_program_time)) / CLOCKS_PER_SEC;

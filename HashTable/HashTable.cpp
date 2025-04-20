@@ -35,34 +35,29 @@ err_t RunHashTable (hshtbl_t* hashtable, char* name_test_file)
 
     while (1)
     {
-        char* key = (char*) calloc (MAX_SIZE_WORD, sizeof (*key));
-
-//         for (size_t offset = 0; offset < hashtable->size_test_text; )
-//         {
-//             size_t start_of_string = offset;
-//
-//             while (offset < hashtable->size_test_text && hashtable->buffer_with_test_text[offset] != '\n')
-//             {
-//                 offset++;
-//             }
-//
-//             printf ("%.*s\n", (int)(offset - line_start), hashtable->buffer_with_test_text + start_of_string);
-//
-//             if (offset < hashtable->size_test_text) offset++; // Пропускаем '\n'
-//         }
-
-
-        offset = 0;
-        sscanf (hashtable->buffer_with_test_text + index, "%s%n", key, (int*)&offset);
-
-        if (offset == 0)
+        if (index >= hashtable->size_test_text)
         {
-            free (key);
-            key = NULL;
             break;
         }
 
-        SearchHashTable (hashtable, key, TEST);
+        char* key = (char*) calloc (MAX_SIZE_WORD, sizeof (*key));
+
+        offset = 0;
+
+        while ((hashtable->buffer_with_test_text + index)[offset] != '\n' && index + offset < hashtable->size_test_text)
+        {
+            if (offset < MAX_SIZE_WORD)
+            {
+                key[offset] = (hashtable->buffer_with_test_text + index)[offset];
+                //fprintf (stderr, YEL "key[%lu] = %c\n" RESET, offset, (hashtable->buffer_with_test_text + index)[offset]);
+            }
+            offset++;
+        }
+
+        key[offset] = '\0';
+        offset++;
+
+        SearchHashTable (hashtable, key, offset - 1, TEST);
 
         index += offset;
     }
@@ -70,9 +65,9 @@ err_t RunHashTable (hshtbl_t* hashtable, char* name_test_file)
     return OK;
 }
 
-err_t SearchHashTable (hshtbl_t* hashtable, my_key_t key, mode_hashtable_t mode)
+err_t SearchHashTable (hshtbl_t* hashtable, my_key_t key, size_t len_of_key, mode_hashtable_t mode)
 {
-    size_t len_of_key = _My_Strlen (key);
+    //size_t len_of_key = _My_Strlen (key);
 
     uint32_t hash     = murmurhash3_32 (key, len_of_key, SEED);
 
@@ -95,7 +90,7 @@ err_t SearchHashTable (hshtbl_t* hashtable, my_key_t key, mode_hashtable_t mode)
             HASHTABLE_DBG printf  (MAG                  "FindInListValue value = <%s>\n" RESET, key);
             HASHTABLE_DBG fprintf (hashtable->log_file, "FindInListValue value = <%s>\n",       key);
 
-            HASHTABLE_DBG printf  (MAG                  "value <%s> was not found in the List\n" RESET, key);
+            printf  (MAG                  "value <%s> was not found in the List\n" RESET, key);
             HASHTABLE_DBG fprintf (hashtable->log_file, "value <%s> was not found in the List\n",       key);
 
             if (mode == LOAD)
@@ -117,7 +112,7 @@ err_t SearchHashTable (hshtbl_t* hashtable, my_key_t key, mode_hashtable_t mode)
             HASHTABLE_DBG printf  (MAG                  "FindInListValue value = <%s>\n" RESET, key);
             HASHTABLE_DBG fprintf (hashtable->log_file, "FindInListValue value = <%s>\n",       key);
 
-            HASHTABLE_DBG printf  (MAG                  "value <%s> was not found in the List\n" RESET, key);
+            printf  (MAG                  "value <%s> was not found in the List\n" RESET, key);
             HASHTABLE_DBG fprintf (hashtable->log_file, "value <%s> was not found in the List\n",       key);
 
             if (mode == LOAD)
@@ -137,7 +132,7 @@ err_t SearchHashTable (hshtbl_t* hashtable, my_key_t key, mode_hashtable_t mode)
     HASHTABLE_DBG printf  (YEL                  "FindInListValue value = <%s>\n" RESET, key);
     HASHTABLE_DBG fprintf (hashtable->log_file, "FindInListValue value = <%s>\n",       key);
 
-    HASHTABLE_DBG printf  (YEL                  "value <%s> was found in %u Basket\n" RESET, key, hash);
+    printf  (YEL                  "value <%s> was found in %u Basket\n" RESET, key, hash);
     HASHTABLE_DBG fprintf (hashtable->log_file, "value <%s> was found in %u Basket\n",       key, hash);
 
     free (key);
@@ -165,22 +160,33 @@ err_t LoadHashTable (hshtbl_t* hashtable)
 
     while (1)
     {
-        char* key = (char*) calloc (MAX_SIZE_WORD, sizeof (*key));
-
-        offset = 0;
-        sscanf (hashtable->buffer_with_text + index, "%s%n", key, (int*)&offset);
-
-        if (offset == 0)
+        if (index >= hashtable->size_text)
         {
-            free (key);
-            key = NULL;
             break;
         }
 
-        SearchHashTable (hashtable, key, LOAD);
+        char* key = (char*) calloc (MAX_SIZE_WORD, sizeof (*key));
+
+        offset = 0;
+
+        while ((hashtable->buffer_with_text + index)[offset] != '\n' && index + offset < hashtable->size_text)
+        {
+            if (offset < MAX_SIZE_WORD)
+            {
+                key[offset] = (hashtable->buffer_with_text + index)[offset];
+                //fprintf (stderr, YEL "key[%lu] = %c\n" RESET, offset, (hashtable->buffer_with_text + index)[offset]);
+            }
+            offset++;
+        }
+
+        key[offset] = '\0';
+        offset++;
+
+        SearchHashTable (hashtable, key, offset - 1, LOAD);
 
         index += offset;
     }
+
     return OK;
 }
 
