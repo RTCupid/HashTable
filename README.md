@@ -19,6 +19,20 @@ Task of finding
 
 ## Results
 
+
+<div align="center"><img src="img/FirstVersionWithoutOptimizationKeys.png"></div><br>
+  <div align="center"> Fig. 1. First version without optimization keys</div><br>
+
+<div align="center"><img src="img/FirstVersionWithO3.png"></div><br>
+  <div align="center"> Fig. 2. First version with -O3</div><br>
+
+
+<div align="center"><img src="img/PerfOutputFirstVersionWithoutOptimizationKeys.png"></div><br>
+  <div align="center"> Fig. 3. Perf output first version without optimization keys</div><br>
+
+<div align="center"><img src="img/PerfOutputFirstVersionO3.png"></div><br>
+  <div align="center"> Fig. 4. Perf output first version -O3</div><br>
+
 ### Model
 
 ### Measurements
