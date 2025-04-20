@@ -13,6 +13,8 @@
 #include "../List/List.h"
 #include "DumpHashTable.h"
 
+extern "C" size_t _My_Strlen (char* string);
+
 err_t HashTableCtor (hshtbl_t* hashtable)
 {
     printf           (GRN "## Start HashCtor\n" RESET);
@@ -35,6 +37,21 @@ err_t RunHashTable (hshtbl_t* hashtable, char* name_test_file)
     {
         char* key = (char*) calloc (MAX_SIZE_WORD, sizeof (*key));
 
+//         for (size_t offset = 0; offset < hashtable->size_test_text; )
+//         {
+//             size_t start_of_string = offset;
+//
+//             while (offset < hashtable->size_test_text && hashtable->buffer_with_test_text[offset] != '\n')
+//             {
+//                 offset++;
+//             }
+//
+//             printf ("%.*s\n", (int)(offset - line_start), hashtable->buffer_with_test_text + start_of_string);
+//
+//             if (offset < hashtable->size_test_text) offset++; // Пропускаем '\n'
+//         }
+
+
         offset = 0;
         sscanf (hashtable->buffer_with_test_text + index, "%s%n", key, (int*)&offset);
 
@@ -55,17 +72,17 @@ err_t RunHashTable (hshtbl_t* hashtable, char* name_test_file)
 
 err_t SearchHashTable (hshtbl_t* hashtable, my_key_t key, mode_hashtable_t mode)
 {
-    size_t len_of_key = strlen (key);
+    size_t len_of_key = _My_Strlen (key);
 
     uint32_t hash     = murmurhash3_32 (key, len_of_key, SEED);
 
     HASHTABLE_DBG printf  (GRN "key \"%.6s\" => hash =  %u\n" RESET, key, hash);
-    fprintf               (hashtable->log_file, "key \"%.6s\" => hash =  %u\n", key, hash);
+    HASHTABLE_DBG fprintf (hashtable->log_file, "key \"%.6s\" => hash =  %u\n", key, hash);
 
     hash = hash % (uint32_t) NBASKETS;
 
-    HASHTABLE_DBG printf (CYN "hash %% NBASKETS = %u\n" RESET, hash);
-    fprintf              (hashtable->log_file, "hash %% NBASKETS = %u\n", hash);
+    HASHTABLE_DBG printf  (CYN "hash %% NBASKETS = %u\n" RESET, hash);
+    HASHTABLE_DBG fprintf (hashtable->log_file, "hash %% NBASKETS = %u\n", hash);
 
     int    status = 0;
 
@@ -76,10 +93,10 @@ err_t SearchHashTable (hshtbl_t* hashtable, my_key_t key, mode_hashtable_t mode)
             fprintf (hashtable->log_file, "status = 0\n");
 
             HASHTABLE_DBG printf  (MAG                  "FindInListValue value = <%s>\n" RESET, key);
-            fprintf (hashtable->log_file, "FindInListValue value = <%s>\n",       key);
+            HASHTABLE_DBG fprintf (hashtable->log_file, "FindInListValue value = <%s>\n",       key);
 
             HASHTABLE_DBG printf  (MAG                  "value <%s> was not found in the List\n" RESET, key);
-            fprintf (hashtable->log_file, "value <%s> was not found in the List\n",       key);
+            HASHTABLE_DBG fprintf (hashtable->log_file, "value <%s> was not found in the List\n",       key);
 
             if (mode == LOAD)
             {
@@ -98,10 +115,10 @@ err_t SearchHashTable (hshtbl_t* hashtable, my_key_t key, mode_hashtable_t mode)
             fprintf (hashtable->log_file, "status != 0\n");
 
             HASHTABLE_DBG printf  (MAG                  "FindInListValue value = <%s>\n" RESET, key);
-            fprintf (hashtable->log_file, "FindInListValue value = <%s>\n",       key);
+            HASHTABLE_DBG fprintf (hashtable->log_file, "FindInListValue value = <%s>\n",       key);
 
             HASHTABLE_DBG printf  (MAG                  "value <%s> was not found in the List\n" RESET, key);
-            fprintf (hashtable->log_file, "value <%s> was not found in the List\n",       key);
+            HASHTABLE_DBG fprintf (hashtable->log_file, "value <%s> was not found in the List\n",       key);
 
             if (mode == LOAD)
             {
@@ -118,10 +135,10 @@ err_t SearchHashTable (hshtbl_t* hashtable, my_key_t key, mode_hashtable_t mode)
     }
 
     HASHTABLE_DBG printf  (YEL                  "FindInListValue value = <%s>\n" RESET, key);
-    fprintf (hashtable->log_file, "FindInListValue value = <%s>\n",       key);
+    HASHTABLE_DBG fprintf (hashtable->log_file, "FindInListValue value = <%s>\n",       key);
 
     HASHTABLE_DBG printf  (YEL                  "value <%s> was found in %u Basket\n" RESET, key, hash);
-    fprintf (hashtable->log_file, "value <%s> was found in %u Basket\n",       key, hash);
+    HASHTABLE_DBG fprintf (hashtable->log_file, "value <%s> was found in %u Basket\n",       key, hash);
 
     free (key);
     key = NULL;

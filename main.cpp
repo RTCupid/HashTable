@@ -1,12 +1,9 @@
 #include <time.h>
 #include <stdio.h>
-#include <stdlib.h>
 
 #include "common/colors.h"
 #include "HashTable/HashTable.h"
 #include "HashTable/DumpHashTable.h"
-
-extern "C" size_t _My_Strlen (char* string);
 
 int main (int argc, char* argv[])
 {
@@ -24,19 +21,11 @@ int main (int argc, char* argv[])
     {
         CreateBufferText (argv[1], &(hashtable.size_text), &(hashtable.buffer_with_text_id), &(hashtable.buffer_with_text));
 
-
-        char* key = (char*) calloc (MAX_SIZE_WORD, sizeof (*key));
-
-        sscanf (hashtable.buffer_with_text, "%s", key);
-
-        size_t size = _My_Strlen (key);
-
-        fprintf (stderr, YEL "Size of %s = %lu\n", key, size);
-
-
         HashTableCtor    (&hashtable);
 
         LoadHashTable    (&hashtable);
+
+        DumpHashTable (hashtable, KEYS);
 
         printf (GRN "## Start searching:\n" RESET);
 

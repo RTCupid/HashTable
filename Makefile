@@ -41,4 +41,4 @@ $(OBJ_DIR)/List.o: List/List.cpp List/List.h
 	@$(CC) -c List/List.cpp -o $(OBJ_DIR)/List.o $(LINUXFLAGSRELIZE)
 
 clean:
-	rm -f main $(OBJ_DIR)/*.o
+	rm -f main $(OBJ_DIR)/*.o $(BIN_DIR)/*.exe
