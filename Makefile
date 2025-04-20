@@ -16,15 +16,20 @@ LINUXFLAGSDEBUG = -D _DEBUG -ggdb3 -O0 -std=c++17 -Wall -Wextra -Weffc++ \
 
 LINUXFLAGSRELIZE = -std=c++17 -Wall -mavx2
 
+NASMFLAGS 		 = -w+orphan-labels
+
 BIN_DIR = ./build/bin
 
 OBJ_DIR = ./build/obj
 
-$(BIN_DIR)/a.exe: $(OBJ_DIR)/main.o $(OBJ_DIR)/HashTable.o $(OBJ_DIR)/List.o $(OBJ_DIR)/DumpHashTable.o
-	$(CC) $(OBJ_DIR)/main.o $(OBJ_DIR)/HashTable.o $(OBJ_DIR)/List.o $(OBJ_DIR)/DumpHashTable.o -o $(BIN_DIR)/a.exe $(LINUXFLAGSRELIZE)
+$(BIN_DIR)/a.exe: $(OBJ_DIR)/main.o $(OBJ_DIR)/HashTable.o $(OBJ_DIR)/List.o $(OBJ_DIR)/_My_Strlen.o $(OBJ_DIR)/DumpHashTable.o
+	$(CC) $(OBJ_DIR)/main.o $(OBJ_DIR)/HashTable.o $(OBJ_DIR)/List.o $(OBJ_DIR)/_My_Strlen.o $(OBJ_DIR)/DumpHashTable.o -o $(BIN_DIR)/a.exe $(LINUXFLAGSRELIZE)
 
 $(OBJ_DIR)/main.o: main.cpp HashTable/HashTable.h
 	@$(CC) -c main.cpp -o $(OBJ_DIR)/main.o $(LINUXFLAGSRELIZE)
+
+$(OBJ_DIR)/_My_Strlen.o: MyAsmFunction/_My_Strlen.s
+	nasm -f elf64 -l $(OBJ_DIR)/_My_Strlen.lst MyAsmFunction/_My_Strlen.s -o $(OBJ_DIR)/_My_Strlen.o $(NASMFLAGS)
 
 $(OBJ_DIR)/HashTable.o: HashTable/HashTable.cpp HashTable/HashTable.h HashTable/DumpHashTable.h List/List.h
 	@$(CC) -c HashTable/HashTable.cpp -o $(OBJ_DIR)/HashTable.o $(LINUXFLAGSRELIZE)
