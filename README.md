@@ -30,7 +30,7 @@ Task of finding
 <div align="center"><img src="img/PerfOutputFirstVersionWithoutOptimizationKeys.png"></div><br>
   <div align="center"> Fig. 3. Perf output first version without optimization keys</div><br>
 
-<div align="center"><img src="img/PerfOutputFirstVersionO3.png"></div><br>
+<div align="center"><img src="img/PerfOutputFirstVersionWithO3.png"></div><br>
   <div align="center"> Fig. 4. Perf output first version -O3</div><br>
 
 ### Model
