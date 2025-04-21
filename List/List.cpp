@@ -2,17 +2,20 @@
 #include <stdlib.h>
 #include <assert.h>
 #include <string.h>
+#include <immintrin.h>
 
 #include "../common/colors.h"
 #include "List.h"
+
+extern "C" __m256i _My_Strcmp (char* first_string, char* second_string);
 
 errlst_t ListCtor (list_t* List)
 {
     List->data = (char**) calloc (SIZE_LIST, sizeof (*List->data));
 
-    List->next = (int*)  calloc (SIZE_LIST, sizeof (int));
+    List->next = (int*)   calloc (SIZE_LIST, sizeof (int));
 
-    List->prev = (int*)  calloc (SIZE_LIST, sizeof (int));
+    List->prev = (int*)   calloc (SIZE_LIST, sizeof (int));
 
     for (int i = 1; i < SIZE_FREE; i++)
     {
@@ -158,7 +161,7 @@ int FindInListValue (list_t List, char* value, int* status)
             *status = 1;
         }
 
-        if (List.data[index] == NULL)
+        /*if (List.data[index] == NULL)
         {
             fprintf (stderr, RED "List.data[%d] == NULL\n" RESET, index);
             break;
@@ -168,11 +171,11 @@ int FindInListValue (list_t List, char* value, int* status)
         {
             fprintf (stderr, RED "value == NULL\n" RESET);
             break;
-        }
+        } */
 
         LIST_DBG fprintf (stderr, "Start strcmp\n");
 
-        if (strcmp (List.data[index], value) == 0)
+        if (_My_Strcmp (List.data[index], value) == 0)
         {
             LIST_DBG LIST_DBG printf (GRN "FindInListValue value = <%s>\n"  RESET, value);
             LIST_DBG LIST_DBG printf (GRN "index of value <%s>   = %d\n"    RESET, value, index);

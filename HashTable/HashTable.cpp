@@ -13,8 +13,6 @@
 #include "../List/List.h"
 #include "DumpHashTable.h"
 
-extern "C" size_t _My_Strlen (char* string);
-
 err_t HashTableCtor (hshtbl_t* hashtable)
 {
     printf           (GRN "## Start HashCtor\n" RESET);
@@ -65,8 +63,6 @@ err_t RunHashTable (hshtbl_t* hashtable)
 
 err_t SearchHashTable (hshtbl_t* hashtable, my_key_t key, size_t len_of_key, mode_hashtable_t mode)
 {
-    //size_t len_of_key = _My_Strlen (key);
-
     uint32_t hash     = murmurhash3_32 (key, len_of_key, SEED);
 
     HASHTABLE_DBG printf  (GRN "key \"%.6s\" => hash =  %u\n" RESET, key, hash);

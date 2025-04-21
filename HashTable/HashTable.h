@@ -29,7 +29,7 @@ enum mode_print_hashtable_t
     KEYS,
 };
 
-const int      MAX_SIZE_WORD = 30;
+const int      MAX_SIZE_WORD = 32;
 
 const size_t   NBASKETS      = 1409;
 
