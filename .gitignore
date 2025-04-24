@@ -1,2 +1,3 @@
 build/
 callgrind.out.*
+perf.data.*
