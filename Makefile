@@ -14,7 +14,7 @@ LINUXFLAGSDEBUG = -D _DEBUG -ggdb3 -O0 -std=c++17 -Wall -Wextra -Weffc++ \
 	nonnull-attribute,null,object-size,return,returns-nonnull-attribute,shift,$\
 	signed-integer-overflow,undefined,unreachable,vla-bound,vptr -mavx2
 
-LINUXFLAGSRELIZE = -std=c++17 -Wall -mavx2
+LINUXFLAGSRELIZE = -std=c++17 -g -Wall -mavx2 -O3
 
 NASMFLAGS 		 = -w+orphan-labels
 

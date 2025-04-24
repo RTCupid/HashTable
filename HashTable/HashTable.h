@@ -6,6 +6,7 @@
 #include "../List/List.h"
 
 #define HASHTABLE_DBG if(0)
+#define PRINTF_IF_FIND if(0)
 
 enum err_t
 {
@@ -30,6 +31,8 @@ enum mode_print_hashtable_t
 };
 
 const int      MAX_SIZE_WORD = 32;
+
+const size_t   ALIGN         = 32;
 
 const size_t   NBASKETS      = 1409;
 

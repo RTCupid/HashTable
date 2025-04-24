@@ -7,7 +7,7 @@
 #include "../common/colors.h"
 #include "List.h"
 
-extern "C" int _My_Strcmp (char* first_string, char* second_string);
+extern "C" inline int _My_Strcmp (char* first_string, char* second_string);
 
 errlst_t ListCtor (list_t* List)
 {
@@ -175,7 +175,9 @@ int FindInListValue (list_t List, char* value, int* status)
 
         LIST_DBG fprintf (stderr, "Start strcmp\n");
 
-        if (_My_Strcmp (List.data[index], value) == 0)
+        int result_of_compare = strcmp (List.data[index], value);
+
+        if (result_of_compare == 0)
         {
             LIST_DBG printf (GRN "FindInListValue value = <%s>\n"  RESET, value);
             LIST_DBG printf (GRN "index of value <%s>   = %d\n"    RESET, value, index);
@@ -196,6 +198,18 @@ int FindInListValue (list_t List, char* value, int* status)
     LIST_DBG printf (YEL "FindInListValue value = <%s>\n"         RESET, value);
     LIST_DBG printf (YEL "value <%s> was not found in the List\n" RESET, value);
     return 0;
+}
+
+inline int MyStrcmp (char* first_string, char* second_string)
+{
+    __m256i first_string_mm   = _mm256_lddqu_si256   ((__m256i const*)  first_string);
+    __m256i second_string_mm  = _mm256_lddqu_si256   ((__m256i const*) second_string);
+
+    __m256i result_of_compare =  _mm256_cmpeq_epi8   (first_string_mm, second_string_mm);
+
+    int mask                  = _mm256_movemask_epi8 (result_of_compare);
+
+    return ~mask;
 }
 
 void Pause ()

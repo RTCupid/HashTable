@@ -15,8 +15,8 @@ global      _My_Strcmp                                  ; predefine func for lin
 ; Destroy:  rsi, rdx, rcx, rax
 ;--------------------------------------------------------------------------------------------------
 _My_Strcmp:
-            vmovups     ymm0, [rdi]                     ; ymm0 = first string
-            vmovups     ymm1, [rsi]                     ; ymm1 = second string
+            vlddqu     ymm0, [rdi]                     ; ymm0 = first string
+            vlddqu     ymm1, [rsi]                     ; ymm1 = second string
 
             vpcmpeqb    ymm0, ymm1                      ; compare first and second strings as bytes
 

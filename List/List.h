@@ -44,5 +44,7 @@ errlst_t ClearList      (list_t* List);
 
 int      FindInListValue (list_t List, char* value, int* status);
 
+inline int MyStrcmp (char* first_string, char* second_string);
+
 void     Pause ();
 #endif
