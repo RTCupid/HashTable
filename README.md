@@ -25,17 +25,17 @@
 
 В первой версии хэш таблицы поиск слова занял 21.5 с . С ключом оптимизации -O3 время поиска составило 20.6 с. По профилю программы, . 
 
-<div align="center"><img src="img/FirstVersionWithoutOptimizationKeys.png"></div><br>
+<div align="center"><img src="img/First/FirstVersionWithoutOptimizationKeys.png"></div><br>
   <div align="center"> Рис. 1. First version without optimization keys</div><br>
 
-<div align="center"><img src="img/FirstVersionWithO3.png"></div><br>
+<div align="center"><img src="img/First/FirstVersionWithO3.png"></div><br>
   <div align="center"> Рис. 2. First version with -O3</div><br>
 
 
-<div align="center"><img src="img/PerfOutputFirstVersionWithoutOptimizationKeys.png"></div><br>
+<div align="center"><img src="img/First/PerfOutputFirstVersionWithoutOptimizationKeys.png"></div><br>
   <div align="center"> Рис. 3. Фрагмент профиля, полученного инстументом perf, первой версии программы для быстрого поиска количества вхождений слова в текст без ключей оптимизации.</div><br>
 
-<div align="center"><img src="img/PerfOutputFirstVersionWithO3.png"></div><br>
+<div align="center"><img src="img/First/PerfOutputFirstVersionWithO3.png"></div><br>
   <div align="center"> Рис. 4. Фрагмент профиля, полученного инстументом perf, первой версии программы для быстрого поиска количества вхождений слова в текст с ключом оптимизации -O3.</div><br>
 
 ### Модель
