@@ -77,66 +77,42 @@ err_t SearchHashTable (hshtbl_t* hashtable, my_key_t key, size_t len_of_key, mod
 {
     uint32_t hash     = murmurhash3_32 (key, len_of_key, SEED);
 
-    HASHTABLE_DBG printf  (GRN "key \"%.6s\" => hash =  %u\n" RESET, key, hash);
+    HASHTABLE_DBG printf  (GRN                  "key \"%.6s\" => hash =  %u\n" RESET, key, hash);
     HASHTABLE_DBG fprintf (hashtable->log_file, "key \"%.6s\" => hash =  %u\n", key, hash);
 
     hash = hash % (uint32_t) NBASKETS;
 
-    HASHTABLE_DBG printf  (CYN "hash %% NBASKETS = %u\n" RESET, hash);
+    HASHTABLE_DBG printf  (CYN                  "hash %% NBASKETS = %u\n" RESET, hash);
     HASHTABLE_DBG fprintf (hashtable->log_file, "hash %% NBASKETS = %u\n", hash);
 
     int    status = 0;
 
     if (!FindInListValue (hashtable->HashTable[hash], key, &status))
     {
-        if (status == 0)
+        printf  (MAG                                "value <%s> was not found in the List\n" RESET, key);
+        HASHTABLE_DBG fprintf (hashtable->log_file, "value <%s> was not found in the List\n",       key);
+
+        if (mode == LOAD)
         {
-            HASHTABLE_DBG fprintf (hashtable->log_file, "status = 0\n");
-
-            HASHTABLE_DBG printf  (MAG                  "FindInListValue value = <%s>\n" RESET, key);
-            HASHTABLE_DBG fprintf (hashtable->log_file, "FindInListValue value = <%s>\n",       key);
-
-            printf  (MAG                  "value <%s> was not found in the List\n" RESET, key);
-            HASHTABLE_DBG fprintf (hashtable->log_file, "value <%s> was not found in the List\n",       key);
-
-            if (mode == LOAD)
+            if (status == 0)
             {
+                HASHTABLE_DBG fprintf (hashtable->log_file, "status = 0,  add key to tail of list\n");
                 ListAddTail  (&(hashtable->HashTable[hash]), key);
             }
             else
             {
-                free (key);
-                key = NULL;
+                HASHTABLE_DBG fprintf (hashtable->log_file, "status != 0, add key to head of list\n");
+                ListAddFairy (&(hashtable->HashTable[hash]), key);
             }
-
-            return OK;
         }
         else
         {
-            HASHTABLE_DBG fprintf (hashtable->log_file, "status != 0\n");
-
-            HASHTABLE_DBG printf  (MAG                  "FindInListValue value = <%s>\n" RESET, key);
-            HASHTABLE_DBG fprintf (hashtable->log_file, "FindInListValue value = <%s>\n",       key);
-
-            printf  (MAG                  "value <%s> was not found in the List\n" RESET, key);
-            HASHTABLE_DBG fprintf (hashtable->log_file, "value <%s> was not found in the List\n",       key);
-
-            if (mode == LOAD)
-            {
-                ListAddFairy (&(hashtable->HashTable[hash]), key);
-            }
-            else
-            {
-                free (key);
-                key = NULL;
-            }
-
-            return OK;
+            free (key);
+            key = NULL;
         }
-    }
 
-    HASHTABLE_DBG  printf  (YEL                  "FindInListValue value = <%s>\n" RESET, key);
-    HASHTABLE_DBG  fprintf (hashtable->log_file, "FindInListValue value = <%s>\n",       key);
+        return OK;
+    }
 
     PRINTF_IF_FIND printf  (YEL                  "value <%s> was found in %u Basket\n" RESET, key, hash);
     HASHTABLE_DBG  fprintf (hashtable->log_file, "value <%s> was found in %u Basket\n",       key, hash);
