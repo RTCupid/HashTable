@@ -161,18 +161,6 @@ int FindInListValue (list_t List, char* value, int* status)
             *status = 1;
         }
 
-        /*if (List.data[index] == NULL)
-        {
-            fprintf (stderr, RED "List.data[%d] == NULL\n" RESET, index);
-            break;
-        }
-
-        if (value == NULL)
-        {
-            fprintf (stderr, RED "value == NULL\n" RESET);
-            break;
-        } */
-
         LIST_DBG fprintf (stderr, "Start strcmp\n");
 
         int result_of_compare = strcmp (List.data[index], value);

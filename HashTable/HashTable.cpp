@@ -24,14 +24,27 @@ err_t HashTableCtor (hshtbl_t* hashtable)
     return OK;
 }
 
-err_t RunHashTable (hshtbl_t* hashtable)
+err_t RunHashTable (hshtbl_t* hashtable, mode_hashtable_t mode)
 {
-    size_t offset = 0;
-    size_t index = 0;
+    size_t offset      = 0;
+    size_t index       = 0;
+    size_t size_text   = 0;
+    char*  text_buffer = NULL;
+
+    if      (mode == TEST)
+    {
+        size_text   = hashtable->size_test_text;
+        text_buffer = hashtable->buffer_with_test_text;
+    }
+    else if (mode == LOAD)
+    {
+        size_text   = hashtable->size_text;
+        text_buffer = hashtable->buffer_with_text;
+    }
 
     while (1)
     {
-        if (index >= hashtable->size_test_text)
+        if (index >= size_text)
         {
             break;
         }
@@ -40,12 +53,11 @@ err_t RunHashTable (hshtbl_t* hashtable)
 
         offset = 0;
 
-        while ((hashtable->buffer_with_test_text + index)[offset] != '\n' && index + offset < hashtable->size_test_text)
+        while ((text_buffer + index)[offset] != '\n' && index + offset < size_text)
         {
             if (offset < MAX_SIZE_WORD)
             {
-                key[offset] = (hashtable->buffer_with_test_text + index)[offset];
-                //fprintf (stderr, YEL "key[%lu] = %c\n" RESET, offset, (hashtable->buffer_with_test_text + index)[offset]);
+                key[offset] = (text_buffer + index)[offset];
             }
             offset++;
         }
@@ -53,7 +65,7 @@ err_t RunHashTable (hshtbl_t* hashtable)
         key[offset] = '\0';
         offset++;
 
-        SearchHashTable (hashtable, key, offset - 1, TEST);
+        SearchHashTable (hashtable, key, offset - 1, mode);
 
         index += offset;
     }
@@ -142,43 +154,6 @@ err_t CreateHashTable (hshtbl_t* hashtable)
     for (size_t index = 0; index < NBASKETS; index++)
     {
         ListCtor (&(hashtable->HashTable[index]));
-    }
-
-    return OK;
-}
-
-err_t LoadHashTable (hshtbl_t* hashtable)
-{
-    size_t offset = 0;
-    size_t index = 0;
-
-    while (1)
-    {
-        if (index >= hashtable->size_text)
-        {
-            break;
-        }
-
-        char* key = (char*) calloc (MAX_SIZE_WORD, sizeof (*key));
-
-        offset = 0;
-
-        while ((hashtable->buffer_with_text + index)[offset] != '\n' && index + offset < hashtable->size_text)
-        {
-            if (offset < MAX_SIZE_WORD)
-            {
-                key[offset] = (hashtable->buffer_with_text + index)[offset];
-                //fprintf (stderr, YEL "key[%lu] = %c\n" RESET, offset, (hashtable->buffer_with_text + index)[offset]);
-            }
-            offset++;
-        }
-
-        key[offset] = '\0';
-        offset++;
-
-        SearchHashTable (hashtable, key, offset - 1, LOAD);
-
-        index += offset;
     }
 
     return OK;

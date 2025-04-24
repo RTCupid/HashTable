@@ -64,12 +64,10 @@ err_t       CreateBufferText  (char * namefile, size_t* size_text, int* buffer_w
 
 err_t       CreateHashTable   (hshtbl_t* hashtable);
 
-err_t       LoadHashTable     (hshtbl_t* hashtable);
-
 uint32_t    murmurhash3_32    (const void* key, size_t len, uint32_t seed);
 
 err_t       SearchHashTable   (hshtbl_t* hashtable, my_key_t key, size_t len_of_key, mode_hashtable_t mode);
 
-err_t       RunHashTable      (hshtbl_t* hashtable);
+err_t       RunHashTable      (hshtbl_t* hashtable, mode_hashtable_t mode);
 
 #endif

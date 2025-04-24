@@ -23,7 +23,7 @@ int main (int argc, char* argv[])
 
         HashTableCtor    (&hashtable);
 
-        LoadHashTable    (&hashtable);
+        RunHashTable    (&hashtable, LOAD);
 
         //DumpHashTable (hashtable, KEYS);
 
@@ -35,7 +35,7 @@ int main (int argc, char* argv[])
 
         for (size_t times = 0; times < NTIMES; times++)
         {
-            RunHashTable     (&hashtable);
+            RunHashTable     (&hashtable, TEST);
         }
 
         clock_t end_program_time   = clock ();
