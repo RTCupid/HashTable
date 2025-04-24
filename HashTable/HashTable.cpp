@@ -184,16 +184,24 @@ err_t CreateBufferText  (char * namefile, size_t* size_text, int* buffer_with_te
 
 err_t HashTableDtor (hshtbl_t* hashtable)
 {
-    if (munmap (hashtable->buffer_with_text, hashtable->size_text) == -1)
+    DeleteBufferText (hashtable->buffer_with_text, hashtable->buffer_with_text_id, hashtable->size_text);
+    DeleteBufferText (hashtable->buffer_with_test_text, hashtable->buffer_with_test_text_id, hashtable->size_test_text);
+
+    ClearHashTable   (hashtable);
+
+    fclose (hashtable->log_file);
+
+    return OK;
+}
+
+err_t DeleteBufferText (char* text_buffer, int text_buffer_id, size_t size_text)
+{
+    if (munmap (text_buffer, size_text) == -1)
     {
         perror ("munmap");
     }
 
-    close  (hashtable->buffer_with_text_id);
-
-    ClearHashTable (hashtable);
-
-    fclose (hashtable->log_file);
+    close  (text_buffer_id);
 
     return OK;
 }
