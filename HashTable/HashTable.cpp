@@ -36,7 +36,7 @@ err_t RunHashTable (hshtbl_t* hashtable)
             break;
         }
 
-        char* key = (char*) calloc (MAX_SIZE_WORD, sizeof (*key));
+        alignas (32) char* key = (char*) calloc (MAX_SIZE_WORD, sizeof (*key));
 
         offset = 0;
 
@@ -79,7 +79,7 @@ err_t SearchHashTable (hshtbl_t* hashtable, my_key_t key, size_t len_of_key, mod
     {
         if (status == 0)
         {
-            fprintf (hashtable->log_file, "status = 0\n");
+            HASHTABLE_DBG fprintf (hashtable->log_file, "status = 0\n");
 
             HASHTABLE_DBG printf  (MAG                  "FindInListValue value = <%s>\n" RESET, key);
             HASHTABLE_DBG fprintf (hashtable->log_file, "FindInListValue value = <%s>\n",       key);
@@ -101,7 +101,7 @@ err_t SearchHashTable (hshtbl_t* hashtable, my_key_t key, size_t len_of_key, mod
         }
         else
         {
-            fprintf (hashtable->log_file, "status != 0\n");
+            HASHTABLE_DBG fprintf (hashtable->log_file, "status != 0\n");
 
             HASHTABLE_DBG printf  (MAG                  "FindInListValue value = <%s>\n" RESET, key);
             HASHTABLE_DBG fprintf (hashtable->log_file, "FindInListValue value = <%s>\n",       key);
@@ -159,7 +159,7 @@ err_t LoadHashTable (hshtbl_t* hashtable)
             break;
         }
 
-        char* key = (char*) calloc (MAX_SIZE_WORD, sizeof (*key));
+        alignas (32) char* key = (char*) calloc (MAX_SIZE_WORD, sizeof (*key));
 
         offset = 0;
 

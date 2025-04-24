@@ -7,7 +7,7 @@
 #include "../common/colors.h"
 #include "List.h"
 
-extern "C" __m256i _My_Strcmp (char* first_string, char* second_string);
+extern "C" int _My_Strcmp (char* first_string, char* second_string);
 
 errlst_t ListCtor (list_t* List)
 {
@@ -177,8 +177,8 @@ int FindInListValue (list_t List, char* value, int* status)
 
         if (_My_Strcmp (List.data[index], value) == 0)
         {
-            LIST_DBG LIST_DBG printf (GRN "FindInListValue value = <%s>\n"  RESET, value);
-            LIST_DBG LIST_DBG printf (GRN "index of value <%s>   = %d\n"    RESET, value, index);
+            LIST_DBG printf (GRN "FindInListValue value = <%s>\n"  RESET, value);
+            LIST_DBG printf (GRN "index of value <%s>   = %d\n"    RESET, value, index);
             return index;
         }
         else

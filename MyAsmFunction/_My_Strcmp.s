@@ -15,12 +15,17 @@ global      _My_Strcmp                                  ; predefine func for lin
 ; Destroy:  rsi, rdx, rcx, rax
 ;--------------------------------------------------------------------------------------------------
 _My_Strcmp:
-            movaps ymm0, [rdi]
-            movaps ymm1, [rsi]
+            vmovups     ymm0, [rdi]                     ; ymm0 = first string
+            vmovups     ymm1, [rsi]                     ; ymm1 = second string
 
-            vpcmpeqb ymm0, ymm1
+            vpcmpeqb    ymm0, ymm1                      ; compare first and second strings as bytes
 
+            vpmovmskb   eax,  ymm0                      ; move int mask, if (first_string[i] ==
+                                                        ; second_string[i]) mask[i] = 1
+                                                        ; else              mask[i] = 0
+            not         eax                             ; if (eax == 0xFFFFFFFF) eax =  0
+                                                        ; else                   eax != 0
             ret
-;-----------End-_My_Strcmp-----------------------------------------------------------------
+;-----------End-_My_Strcmp-------------------------------------------------------------------------
 
 section     .note.GNU-stack
