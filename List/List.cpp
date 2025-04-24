@@ -163,7 +163,7 @@ int FindInListValue (list_t List, char* value, int* status)
 
         LIST_DBG fprintf (stderr, "Start strcmp\n");
 
-        int result_of_compare = strcmp (List.data[index], value);
+        int result_of_compare = MyStrcmp (List.data[index], value);
 
         if (result_of_compare == 0)
         {

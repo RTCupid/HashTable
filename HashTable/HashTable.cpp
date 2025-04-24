@@ -1,3 +1,4 @@
+#include <time.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/types.h>
@@ -20,6 +21,31 @@ err_t HashTableCtor (hshtbl_t* hashtable)
     hashtable->log_file = fopen ("build/log_file.txt", "wt");
 
     CreateHashTable  (hashtable);
+
+    return OK;
+}
+
+err_t ProcessMeasurings (hshtbl_t* hashtable, size_t ntimes, size_t npoints)
+{
+    FILE*    Measurings_file = fopen ("Measurings.txt", "w");
+    fprintf (Measurings_file, "Time, s \n");
+
+    for (size_t points = 0; points < npoints; points++)
+    {
+        clock_t start_search_time = clock ();
+
+        for (size_t times = 0; times < ntimes; times++)
+        {
+            RunHashTable (hashtable, TEST);
+        }
+
+        clock_t end_search_time = clock ();
+
+        double cpu_time_used    = ((double) (end_search_time - start_search_time)) / CLOCKS_PER_SEC;
+
+        printf  (    "Search time: %f s\n", cpu_time_used);
+        fprintf (Measurings_file, "%f  \n", cpu_time_used);
+    }
 
     return OK;
 }

@@ -1,5 +1,5 @@
-#include <time.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "common/colors.h"
 #include "HashTable/HashTable.h"
@@ -25,32 +25,24 @@ int main (int argc, char* argv[])
 
         RunHashTable    (&hashtable, LOAD);
 
-        //DumpHashTable (hashtable, KEYS);
-
         printf (GRN "## Start searching:\n" RESET);
 
         CreateBufferText (argv[2], &(hashtable.size_test_text), &(hashtable.buffer_with_test_text_id), &(hashtable.buffer_with_test_text));
 
-        clock_t start_program_time = clock ();
-
-        for (size_t times = 0; times < NTIMES; times++)
+        if (argc > 3)
         {
-            RunHashTable     (&hashtable, TEST);
+            ProcessMeasurings (&hashtable, NTIMES, atoi (argv[3]));
+        }
+        else
+        {
+            ProcessMeasurings (&hashtable, NTIMES);
         }
 
-        clock_t end_program_time   = clock ();
-
-        //DumpHashTable (hashtable, KEYS);
-
         HashTableDtor    (&hashtable);
-
-        double cpu_time_used       = ((double) (end_program_time - start_program_time)) / CLOCKS_PER_SEC;
-
-        printf ("Search time: %f s\n", cpu_time_used);
     }
     else
     {
-        fprintf (stderr, RED "Enter file fot loading hash table as first cmd line arg\n" RESET);
+        fprintf (stderr, RED "Enter file fot loading   hash table as first  cmd line arg\n" RESET);
 
         fprintf (stderr, RED "Enter file for search in hash table as second cmd line arg\n" RESET);
         return 0;
