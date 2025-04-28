@@ -145,21 +145,21 @@ errlst_t ClearList (list_t* List)
 int FindInListValue (list_t List, char* value, int* status)
 {
     int index = 0;
+
+    if (List.next[index] == 0)
+    {
+        return 0;
+    }
+
+    index = List.next[index];
+
+    LIST_DBG fprintf (stderr, MAG "index changed! index = %d\n", index);
+
+    *status = 1;
+
     while (1)
     {
         LIST_DBG fprintf (stderr, "index = %d\n", index);
-
-        if (index == 0)
-        {
-            if (List.next[index] == 0)
-            {
-                break;
-            }
-
-            index   = List.next[index];
-            LIST_DBG fprintf (stderr, MAG "index changed! index = %d\n", index);
-            *status = 1;
-        }
 
         LIST_DBG fprintf (stderr, "Start strcmp\n");
 
@@ -179,7 +179,6 @@ int FindInListValue (list_t List, char* value, int* status)
             }
 
             index   = List.next[index];
-            *status = 1;
         }
     }
 
