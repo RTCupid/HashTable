@@ -22,14 +22,14 @@ err_t HashTableCtor (hshtbl_t* hashtable)
 
     CreateHashTable  (hashtable);
 
+    hashtable->Measurings_file = fopen ("Measurings.txt", "w");
+    fprintf (hashtable->Measurings_file, "Time, s \n");
+
     return OK;
 }
 
 err_t ProcessMeasurings (hshtbl_t* hashtable, size_t ntimes, size_t npoints)
 {
-    FILE*    Measurings_file = fopen ("Measurings.txt", "w");
-    fprintf (Measurings_file, "Time, s \n");
-
     for (size_t points = 0; points < npoints; points++)
     {
         clock_t start_search_time = clock ();
@@ -44,7 +44,7 @@ err_t ProcessMeasurings (hshtbl_t* hashtable, size_t ntimes, size_t npoints)
         double cpu_time_used    = ((double) (end_search_time - start_search_time)) / CLOCKS_PER_SEC;
 
         printf  (    "Search time: %f s\n", cpu_time_used);
-        fprintf (Measurings_file, "%f  \n", cpu_time_used);
+        fprintf (hashtable->Measurings_file, "%f  \n", cpu_time_used);
     }
 
     return OK;

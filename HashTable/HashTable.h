@@ -50,6 +50,7 @@ typedef struct hshtbl_t
     char*     buffer_with_test_text;
     list_t*   HashTable;
     FILE*     log_file;
+    FILE*     Measurings_file;
 } hshtbl_t;
 
 typedef char* my_key_t;
