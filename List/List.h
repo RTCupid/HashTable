@@ -4,12 +4,14 @@
 #define PS if(0)
 #define LIST_DBG if(0)
 
+#include "../HashTable/HashTable.h"
+
 typedef struct list_t
 {
-    char** data;
-    int*   next;
-    int*   prev;
-    int    free;
+    my_key_t*    data;
+    int*        next;
+    int*        prev;
+    int         free;
 } list_t;
 
 enum errlst_t
@@ -26,25 +28,25 @@ enum errlst_t
 const int SIZE_LIST = 30;
 const int SIZE_FREE = SIZE_LIST - 1;
 
-errlst_t ListCtor       (list_t* List);
+errlst_t ListCtor           (list_t* List);
 
-errlst_t ListDtor       (list_t* List);
+errlst_t ListDtor           (list_t* List);
 
-errlst_t ListAddAfter   (list_t* List, int anch, char* value);
+errlst_t ListAddAfter       (list_t* List, int anch, my_key_t key);
 
-errlst_t ListAddBefore  (list_t* List, int anch, char* value);
+errlst_t ListAddBefore      (list_t* List, int anch, my_key_t key);
 
-errlst_t ListAddFairy   (list_t* List, char* value);
+errlst_t ListAddFairy       (list_t* List, my_key_t key);
 
-errlst_t ListAddTail    (list_t* List, char* value);
+errlst_t ListAddTail        (list_t* List, my_key_t key);
 
-errlst_t ListDel        (list_t* List, int anch);
+errlst_t ListDel            (list_t* List, int anch);
 
-errlst_t ClearList      (list_t* List);
+errlst_t ClearList          (list_t* List);
 
-int      FindInListValue (list_t List, char* value, int* status);
+int      FindInListValue    (list_t List, my_key_t key, int* status);
 
-inline int MyStrcmp (char* first_string, char* second_string);
+inline int MyStrcmp         (my_key_t first_string, my_key_t second_string);
 
 void     Pause ();
 #endif

@@ -2,11 +2,12 @@
 #define HASHTABLE_H
 
 #include <stdint.h>
-
-#include "../List/List.h"
+#include <immintrin.h>
 
 #define HASHTABLE_DBG if(0)
 #define PRINTF_IF_FIND if(0)
+
+struct list_t;
 
 enum err_t
 {
@@ -53,7 +54,7 @@ typedef struct hshtbl_t
     FILE*     Measurings_file;
 } hshtbl_t;
 
-typedef char* my_key_t;
+typedef __m256i* my_key_t;
 
 err_t       HashTableCtor     (hshtbl_t* hashtable);
 

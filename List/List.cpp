@@ -6,16 +6,17 @@
 
 #include "../common/colors.h"
 #include "List.h"
+#include "../HashTable/HashTable.h"
 
 extern "C" inline int _My_Strcmp (char* first_string, char* second_string);
 
 errlst_t ListCtor (list_t* List)
 {
-    List->data = (char**) calloc (SIZE_LIST, sizeof (*List->data));
+    List->data = (my_key_t*) calloc (SIZE_LIST, sizeof (*List->data));
 
-    List->next = (int*)   calloc (SIZE_LIST, sizeof (int));
+    List->next = (int*)      calloc (SIZE_LIST, sizeof (int));
 
-    List->prev = (int*)   calloc (SIZE_LIST, sizeof (int));
+    List->prev = (int*)      calloc (SIZE_LIST, sizeof (int));
 
     for (int i = 1; i < SIZE_FREE; i++)
     {
@@ -47,7 +48,7 @@ errlst_t ListDtor (list_t* List)
     return LIST_OK;
 }
 
-errlst_t ListAddAfter (list_t* List, int anch, char* value)
+errlst_t ListAddAfter (list_t* List, int anch, my_key_t value)
 {
     if (List->prev[anch] == -1)
     {
@@ -77,19 +78,19 @@ errlst_t ListAddAfter (list_t* List, int anch, char* value)
     PS Pause ();
     return LIST_OK;
 }
-errlst_t ListAddFairy (list_t* List, char* value)
+errlst_t ListAddFairy (list_t* List, my_key_t value)
 {
     errlst_t error = ListAddAfter (List, 0, value);
     return error;
 }
 
-errlst_t ListAddTail (list_t* List, char* value)
+errlst_t ListAddTail (list_t* List, my_key_t value)
 {
     errlst_t error = ListAddAfter (List, List->prev[0], value);
     return error;
 }
 
-errlst_t ListAddBefore (list_t* List, int anch, char* value)
+errlst_t ListAddBefore (list_t* List, int anch, my_key_t value)
 {
     errlst_t error = ListAddAfter (List, List->prev[anch], value);
     return error;
@@ -142,7 +143,7 @@ errlst_t ClearList (list_t* List)
     return LIST_OK;
 }
 
-int FindInListValue (list_t List, char* value, int* status)
+int FindInListValue (list_t List, my_key_t key, int* status)
 {
     int index = 0;
 
@@ -163,12 +164,12 @@ int FindInListValue (list_t List, char* value, int* status)
 
         LIST_DBG fprintf (stderr, "Start strcmp\n");
 
-        int result_of_compare = MyStrcmp (List.data[index], value);
+        int result_of_compare = MyStrcmp (List.data[index], key);
 
         if (result_of_compare == 0)
         {
-            LIST_DBG printf (GRN "FindInListValue value = <%s>\n"  RESET, value);
-            LIST_DBG printf (GRN "index of value <%s>   = %d\n"    RESET, value, index);
+            LIST_DBG printf (GRN "FindInListValue value = <%s>\n"  RESET, (char*) key);
+            LIST_DBG printf (GRN "index of value <%s>   = %d\n"    RESET, (char*) key, index);
             return index;
         }
         else
@@ -182,17 +183,14 @@ int FindInListValue (list_t List, char* value, int* status)
         }
     }
 
-    LIST_DBG printf (YEL "FindInListValue value = <%s>\n"         RESET, value);
-    LIST_DBG printf (YEL "value <%s> was not found in the List\n" RESET, value);
+    LIST_DBG printf (YEL "FindInListValue value = <%s>\n"         RESET, (char*) key);
+    LIST_DBG printf (YEL "value <%s> was not found in the List\n" RESET, (char*) key);
     return 0;
 }
 
-inline int MyStrcmp (char* first_string, char* second_string)
+inline int MyStrcmp (__m256i* first_string, __m256i* second_string)
 {
-    __m256i first_string_mm   = _mm256_lddqu_si256   ((__m256i const*)  first_string);
-    __m256i second_string_mm  = _mm256_lddqu_si256   ((__m256i const*) second_string);
-
-    __m256i result_of_compare =  _mm256_cmpeq_epi8   (first_string_mm, second_string_mm);
+    __m256i result_of_compare =  _mm256_cmpeq_epi8   (*first_string, *second_string);
 
     int mask                  = _mm256_movemask_epi8 (result_of_compare);
 
