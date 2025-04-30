@@ -49,4 +49,6 @@ int      FindInListValue    (list_t List, my_key_t key, int* status);
 inline int MyStrcmp         (my_key_t first_string, my_key_t second_string);
 
 void     Pause ();
+
+void     DebugPrint_m256i   (__m256i vector);
 #endif

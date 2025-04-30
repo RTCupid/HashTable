@@ -190,15 +190,35 @@ int FindInListValue (list_t List, my_key_t key, int* status)
 
 inline int MyStrcmp (__m256i* first_string, __m256i* second_string)
 {
-    __m256i result_of_compare =  _mm256_cmpeq_epi8   (*first_string, *second_string);
+    __m256i result_of_compare = _mm256_cmpeq_epi64   (*first_string, *second_string);
 
     int mask                  = _mm256_movemask_epi8 (result_of_compare);
+
+    //printf (BLU "first  string = <%s>\n" RESET, (char*) first_string);
+    //DebugPrint_m256i (*first_string);
+
+    //printf (GRN "second string = <%s>\n" RESET, (char*) second_string);
+    //DebugPrint_m256i (*second_string);
 
     return ~mask;
 }
 
 void Pause ()
 {
-    printf ("Enter to continue...\n");
+    printf  ("Enter to continue...\n");
     getchar ();
+}
+
+void DebugPrint_m256i (__m256i vector)
+{
+    uint32_t values[8];
+    _mm256_storeu_si256((__m256i*)values, vector);
+
+    printf (BMAG "-------------------------\n");
+
+    printf("Vector (uint32_t): ");
+    for (int i = 0; i < 8; i++) {
+        printf("%08X ", values[i]);
+    }
+    printf ("\n-------------------------\n" RESET);
 }
