@@ -76,7 +76,7 @@ err_t RunHashTable (hshtbl_t* hashtable, mode_hashtable_t mode)
             break;
         }
 
-        __m256i* key = (__m256i*) aligned_alloc (MAX_SIZE_WORD, sizeof (__m256i));
+        my_key_t key = (my_key_t) aligned_alloc (MAX_SIZE_WORD, sizeof (*key));
 
         offset = 0;
 
