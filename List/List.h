@@ -46,9 +46,9 @@ errlst_t ClearList          (list_t* List);
 
 int      FindInListValue    (list_t List, my_key_t key, int* status);
 
-inline int MyStrcmp         (my_key_t first_string, my_key_t second_string);
+inline uint32_t MyStrcmp    (my_key_t first_string, my_key_t second_string);
 
 void     Pause ();
 
-void     DebugPrint_m256i   (__m256i vector);
+void     DebugPrint_m128i   (__m128i vector);
 #endif

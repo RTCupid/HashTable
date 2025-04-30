@@ -31,7 +31,7 @@ int main (int argc, char* argv[])
 
         if (argc > 3)
         {
-            ProcessMeasurings (&hashtable, NTIMES, atoi (argv[3]));
+            ProcessMeasurings (&hashtable, NTIMES, (size_t) atoi (argv[3]));
         }
         else
         {

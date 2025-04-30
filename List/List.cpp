@@ -164,9 +164,10 @@ int FindInListValue (list_t List, my_key_t key, int* status)
 
         LIST_DBG fprintf (stderr, "Start strcmp\n");
 
-        int result_of_compare = MyStrcmp (List.data[index], key);
+        uint32_t result_of_compare = MyStrcmp (List.data[index], key);
+        LIST_DBG fprintf (stderr, YEL "result of compare = <%u>\n\n" RESET, result_of_compare);
 
-        if (result_of_compare == 0)
+        if (result_of_compare == COMPARE_M128_MASK)
         {
             LIST_DBG printf (GRN "FindInListValue value = <%s>\n"  RESET, (char*) key);
             LIST_DBG printf (GRN "index of value <%s>   = %d\n"    RESET, (char*) key, index);
@@ -188,19 +189,25 @@ int FindInListValue (list_t List, my_key_t key, int* status)
     return 0;
 }
 
-inline int MyStrcmp (my_key_t first_string, my_key_t second_string)
+inline uint32_t MyStrcmp (my_key_t first_string, my_key_t second_string)
 {
-    __m256i result_of_compare = _mm256_cmpeq_epi64   (*first_string, *second_string);
+    __m128i result_of_compare = _mm_cmpeq_epi32   (*first_string, *second_string);
 
-    int mask                  = _mm256_movemask_epi8 (result_of_compare);
+    uint32_t mask             = (uint32_t) _mm_movemask_epi8 (result_of_compare);
 
     //printf (BLU "first  string = <%s>\n" RESET, (char*) first_string);
-    //DebugPrint_m256i (*first_string);
+    //DebugPrint_m128i (*first_string);
 
     //printf (GRN "second string = <%s>\n" RESET, (char*) second_string);
-    //DebugPrint_m256i (*second_string);
+    //DebugPrint_m128i (*second_string);
 
-    return ~mask;
+    //printf (WHT "result of compare:\n" RESET);
+    //DebugPrint_m128i (result_of_compare);
+
+    //printf (WHT "mask in result = <%u>\n" RESET,  mask);
+    //printf (WHT "negative mask  = <%u>\n" RESET, ~mask);
+
+    return mask;
 }
 
 void Pause ()
@@ -209,16 +216,16 @@ void Pause ()
     getchar ();
 }
 
-void DebugPrint_m256i (__m256i vector)
+void DebugPrint_m128i (__m128i vector)
 {
-    uint32_t values[8];
-    _mm256_storeu_si256 ((__m256i*)values, vector);
+    uint32_t values[4];
+    _mm_storeu_si128 ((__m128i*)values, vector);
 
     printf (BMAG "-------------------------\n");
 
     printf ("Vector (uint32_t): ");
-    for (int i = 0; i < 8; i++) {
-        printf ("%08X ", values[i]);
+    for (int i = 0; i < 4; i++) {
+        printf ("%08x ", values[i]);
     }
     printf ("\n-------------------------\n" RESET);
 }

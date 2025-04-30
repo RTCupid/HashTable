@@ -31,15 +31,17 @@ enum mode_print_hashtable_t
     KEYS,
 };
 
-const int      MAX_SIZE_WORD = 32;
+const int      MAX_SIZE_WORD     = 16;
 
-const size_t   ALIGN         = 32;
+const size_t   ALIGN             = 32;
 
-const size_t   NBASKETS      = 1409;
+const size_t   NBASKETS          = 1409;
 
-const uint32_t SEED          = 0xEDABC526;
+const uint32_t SEED              = 0xEDABC526;
 
-const size_t   NTIMES        = 150;
+const size_t   NTIMES            = 150;
+
+const uint32_t COMPARE_M128_MASK = 0x0000FFFF;
 
 typedef struct hshtbl_t
 {
@@ -54,7 +56,7 @@ typedef struct hshtbl_t
     FILE*     Measurings_file;
 } hshtbl_t;
 
-typedef __m256i* my_key_t;
+typedef __m128i* my_key_t;
 
 err_t       HashTableCtor     (hshtbl_t* hashtable);
 

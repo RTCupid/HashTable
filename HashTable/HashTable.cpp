@@ -56,6 +56,7 @@ err_t RunHashTable (hshtbl_t* hashtable, mode_hashtable_t mode)
     size_t offset      = 0;
     size_t index       = 0;
     size_t size_text   = 0;
+    size_t word_len    = 0;
     char*  text_buffer = NULL;
 
     if      (mode == TEST)
@@ -78,21 +79,28 @@ err_t RunHashTable (hshtbl_t* hashtable, mode_hashtable_t mode)
 
         my_key_t key = (my_key_t) aligned_alloc (MAX_SIZE_WORD, sizeof (*key));
 
-        offset = 0;
+        if (key != NULL)
+        {
+            memset (key, 0, MAX_SIZE_WORD);
+        }
+
+        offset   = 0;
+        word_len = 0;
 
         while ((text_buffer + index)[offset] != '\n' && index + offset < size_text)
         {
             if (offset < MAX_SIZE_WORD)
             {
                 *((char*)key + offset) = (text_buffer + index)[offset];
+                word_len++;
             }
             offset++;
         }
 
-        *((char*)key + offset) = '\0';
+        *((char*)key + MAX_SIZE_WORD - 1) = '\0';
         offset++;
 
-        SearchHashTable (hashtable, key, offset - 1, mode);
+        SearchHashTable (hashtable, key, word_len, mode);
 
         index += offset;
     }
