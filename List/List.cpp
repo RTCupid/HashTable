@@ -147,45 +147,32 @@ int FindInListValue (list_t List, my_key_t key, int* status)
 {
     int index = 0;
 
-    if (List.next[index] == 0)
+    if (List.next[index] != 0)
     {
-        return 0;
-    }
+        index = List.next[index];
 
-    index = List.next[index];
+        *status = 1;
 
-    LIST_DBG fprintf (stderr, MAG "index changed! index = %d\n", index);
-
-    *status = 1;
-
-    while (1)
-    {
-        LIST_DBG fprintf (stderr, "index = %d\n", index);
-
-        LIST_DBG fprintf (stderr, "Start strcmp\n");
-
-        uint32_t result_of_compare = MyStrcmp (List.data[index], key);
-        LIST_DBG fprintf (stderr, YEL "result of compare = <%u>\n\n" RESET, result_of_compare);
-
-        if (result_of_compare == COMPARE_M128_MASK)
+        while (1)
         {
-            LIST_DBG printf (GRN "FindInListValue value = <%s>\n"  RESET, (char*) key);
-            LIST_DBG printf (GRN "index of value <%s>   = %d\n"    RESET, (char*) key, index);
-            return index;
-        }
-        else
-        {
-            if (List.next[index] == 0)
+            uint32_t result_of_compare = MyStrcmp (List.data[index], key);
+
+            if (result_of_compare == COMPARE_M128_MASK)
             {
-                break;
+                return index;
             }
+            else
+            {
+                if (List.next[index] == 0)
+                {
+                    break;
+                }
 
-            index   = List.next[index];
+                index   = List.next[index];
+            }
         }
     }
 
-    LIST_DBG printf (YEL "FindInListValue value = <%s>\n"         RESET, (char*) key);
-    LIST_DBG printf (YEL "value <%s> was not found in the List\n" RESET, (char*) key);
     return 0;
 }
 
@@ -194,18 +181,6 @@ inline uint32_t MyStrcmp (my_key_t first_string, my_key_t second_string)
     __m128i result_of_compare = _mm_cmpeq_epi32   (*first_string, *second_string);
 
     uint32_t mask             = (uint32_t) _mm_movemask_epi8 (result_of_compare);
-
-    //printf (BLU "first  string = <%s>\n" RESET, (char*) first_string);
-    //DebugPrint_m128i (*first_string);
-
-    //printf (GRN "second string = <%s>\n" RESET, (char*) second_string);
-    //DebugPrint_m128i (*second_string);
-
-    //printf (WHT "result of compare:\n" RESET);
-    //DebugPrint_m128i (result_of_compare);
-
-    //printf (WHT "mask in result = <%u>\n" RESET,  mask);
-    //printf (WHT "negative mask  = <%u>\n" RESET, ~mask);
 
     return mask;
 }
