@@ -14,7 +14,7 @@ LINUXFLAGSDEBUG = -D _DEBUG -ggdb3 -O0 -std=c++17 -Wall -Wextra -Weffc++ \
 	nonnull-attribute,null,object-size,return,returns-nonnull-attribute,shift,$\
 	signed-integer-overflow,undefined,unreachable,vla-bound,vptr -mavx2 -masm=intel
 
-LINUXFLAGSRELIZE = -std=c++17 -Wall -mavx2 -O3 -masm=intel
+LINUXFLAGSRELIZE = -D NDEBUG -std=c++17 -Wall -mavx2 -O3 -masm=intel
 
 NASMFLAGS 		 = -w+orphan-labels
 
@@ -23,22 +23,22 @@ BIN_DIR = ./build/bin
 OBJ_DIR = ./build/obj
 
 $(BIN_DIR)/a.exe: $(OBJ_DIR)/main.o $(OBJ_DIR)/HashTable.o $(OBJ_DIR)/List.o $(OBJ_DIR)/_My_Strcmp.o $(OBJ_DIR)/DumpHashTable.o
-	$(CC) $(OBJ_DIR)/main.o $(OBJ_DIR)/HashTable.o $(OBJ_DIR)/List.o $(OBJ_DIR)/_My_Strcmp.o $(OBJ_DIR)/DumpHashTable.o -o $(BIN_DIR)/a.exe $(LINUXFLAGSDEBUG)
+	$(CC) $(OBJ_DIR)/main.o $(OBJ_DIR)/HashTable.o $(OBJ_DIR)/List.o $(OBJ_DIR)/_My_Strcmp.o $(OBJ_DIR)/DumpHashTable.o -o $(BIN_DIR)/a.exe $(LINUXFLAGSRELIZE)
 
 $(OBJ_DIR)/main.o: main.cpp HashTable/HashTable.h
-	@$(CC) -c main.cpp -o $(OBJ_DIR)/main.o $(LINUXFLAGSDEBUG)
+	@$(CC) -c main.cpp -o $(OBJ_DIR)/main.o $(LINUXFLAGSRELIZE)
 
 $(OBJ_DIR)/_My_Strcmp.o: MyAsmFunction/_My_Strcmp.s
 	nasm -f elf64 -l $(OBJ_DIR)/_My_Strcmp.lst MyAsmFunction/_My_Strcmp.s -o $(OBJ_DIR)/_My_Strcmp.o $(NASMFLAGS)
 
 $(OBJ_DIR)/HashTable.o: HashTable/HashTable.cpp HashTable/HashTable.h HashTable/DumpHashTable.h List/List.h
-	@$(CC) -c HashTable/HashTable.cpp -o $(OBJ_DIR)/HashTable.o $(LINUXFLAGSDEBUG)
+	@$(CC) -c HashTable/HashTable.cpp -o $(OBJ_DIR)/HashTable.o $(LINUXFLAGSRELIZE)
 
 $(OBJ_DIR)/DumpHashTable.o: HashTable/DumpHashTable.cpp HashTable/DumpHashTable.h HashTable/HashTable.h List/List.h
-	@$(CC) -c HashTable/DumpHashTable.cpp -o $(OBJ_DIR)/DumpHashTable.o $(LINUXFLAGSDEBUG)
+	@$(CC) -c HashTable/DumpHashTable.cpp -o $(OBJ_DIR)/DumpHashTable.o $(LINUXFLAGSRELIZE)
 
 $(OBJ_DIR)/List.o: List/List.cpp List/List.h
-	@$(CC) -c List/List.cpp -o $(OBJ_DIR)/List.o $(LINUXFLAGSDEBUG)
+	@$(CC) -c List/List.cpp -o $(OBJ_DIR)/List.o $(LINUXFLAGSRELIZE)
 
 clean:
 	rm -f main $(OBJ_DIR)/*.o $(BIN_DIR)/*.exe

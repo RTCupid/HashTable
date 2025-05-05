@@ -72,7 +72,7 @@ err_t       CreateHashTable   (hshtbl_t* hashtable);
 
 err_t       ProcessMeasurings (hshtbl_t* hashtable, size_t ntimes, size_t npoints = 1);
 
-uint32_t    murmurhash3_32    (const void* key, size_t len, uint32_t seed);
+uint32_t    murmurhash3    (const void* key, size_t len);
 
 err_t       SearchHashTable   (hshtbl_t* hashtable, my_key_t key, size_t len_of_key, mode_hashtable_t mode);
 

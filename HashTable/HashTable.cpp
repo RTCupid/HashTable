@@ -44,7 +44,7 @@ err_t ProcessMeasurings (hshtbl_t* hashtable, size_t ntimes, size_t npoints)
 
         double cpu_time_used    = ((double) (end_search_time - start_search_time)) / CLOCKS_PER_SEC;
 
-        printf  (    "Search time: %f s\n", cpu_time_used);
+        printf  (               "Search time: %f s\n", cpu_time_used);
         fprintf (hashtable->Measurings_file, "%f  \n", cpu_time_used);
     }
 
@@ -110,7 +110,7 @@ err_t RunHashTable (hshtbl_t* hashtable, mode_hashtable_t mode)
 
 err_t SearchHashTable (hshtbl_t* hashtable, my_key_t key, size_t len_of_key, mode_hashtable_t mode)
 {
-    uint32_t hash     = murmurhash3_32 (key, len_of_key, SEED);
+    uint32_t hash     = murmurhash3 (key, len_of_key);
 
     HASHTABLE_DBG printf  (GRN                  "key \"%.6s\" => hash =  %u\n" RESET, (char*) key, hash);
     HASHTABLE_DBG fprintf (hashtable->log_file, "key \"%.6s\" => hash =  %u\n",       (char*) key, hash);
@@ -170,15 +170,18 @@ err_t CreateHashTable (hshtbl_t* hashtable)
     return OK;
 }
 
-uint32_t murmurhash3_32 (const void* key, size_t len, uint32_t seed)
+uint32_t murmurhash3 (const void* key, size_t len)
 {
     const    uint8_t* data = (const uint8_t*)key;
-    uint32_t hash          = seed;
+
+    uint32_t hash          = SEED;
 
     for (size_t i = 0; i < len; i++)
     {
         hash ^= data[i];
+
         hash  = (hash << 13) | (hash >> 19);
+
         hash  = hash * 0x5bd1e995 + 0x165667b1;
     }
 
@@ -188,6 +191,7 @@ uint32_t murmurhash3_32 (const void* key, size_t len, uint32_t seed)
 err_t CreateBufferText  (char * namefile, size_t* size_text, int* buffer_with_text_id, char** buffer_with_text)
 {
     *buffer_with_text_id = open (namefile, O_RDONLY);
+
     if (*buffer_with_text_id == -1)
     {
         perror ("open");
@@ -197,6 +201,7 @@ err_t CreateBufferText  (char * namefile, size_t* size_text, int* buffer_with_te
     struct stat fileInf = {};
 
     int err = stat (namefile, &fileInf);
+
     if (err != 0)
     {
         printf("Stat err %d\n", err);
@@ -220,6 +225,7 @@ err_t CreateBufferText  (char * namefile, size_t* size_text, int* buffer_with_te
 err_t HashTableDtor (hshtbl_t* hashtable)
 {
     DeleteBufferText (hashtable->buffer_with_text, hashtable->buffer_with_text_id, hashtable->size_text);
+
     DeleteBufferText (hashtable->buffer_with_test_text, hashtable->buffer_with_test_text_id, hashtable->size_test_text);
 
     ClearHashTable   (hashtable);
@@ -248,6 +254,7 @@ err_t ClearHashTable (hshtbl_t* hashtable)
         HASHTABLE_DBG fprintf (stderr, YEL "start clear %lu list\n" RESET, index);
 
         ClearList (&hashtable->HashTable[index]);
+
         ListDtor  (&hashtable->HashTable[index]);
 
         HASHTABLE_DBG fprintf (stderr, GRN "end   clear %lu list\n" RESET, index);
