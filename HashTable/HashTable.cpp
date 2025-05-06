@@ -36,17 +36,6 @@ err_t RunHashTable (hshtbl_t* hashtable, my_key_t* keys, mode_hashtable_t mode)
     size_t word_len    = 0;
     char*  text_buffer = NULL;
 
-    if      (mode == TEST)
-    {
-        size_text   = hashtable->size_test_text;
-        text_buffer = hashtable->buffer_with_test_text;
-    }
-    else if (mode == LOAD)
-    {
-        size_text   = hashtable->size_text;
-        text_buffer = hashtable->buffer_with_text;
-    }
-
     while (1)
     {
         if (index >= size_text)

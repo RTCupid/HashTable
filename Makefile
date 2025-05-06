@@ -22,20 +22,20 @@ BIN_DIR = ./build/bin
 
 OBJ_DIR = ./build/obj
 
-$(BIN_DIR)/a.exe: $(OBJ_DIR)/main.o $(OBJ_DIR)/HashTable.o $(OBJ_DIR)/List.o $(OBJ_DIR)/_My_Strcmp.o $(OBJ_DIR)/DumpHashTable.o
+$(BIN_DIR)/a.exe: $(OBJ_DIR)/main.o $(OBJ_DIR)/HashTable.o $(OBJ_DIR)/List.o $(OBJ_DIR)/DumpHashTable.o InputData.o
 	$(CC) $(OBJ_DIR)/main.o $(OBJ_DIR)/HashTable.o $(OBJ_DIR)/List.o $(OBJ_DIR)/_My_Strcmp.o $(OBJ_DIR)/DumpHashTable.o -o $(BIN_DIR)/a.exe $(LINUXFLAGSRELEASE)
 
-$(OBJ_DIR)/main.o: main.cpp HashTable/HashTable.h
+$(OBJ_DIR)/main.o: main.cpp HashTable/HashTable.h HashTable/InputData.h
 	@$(CC) -c main.cpp -o $(OBJ_DIR)/main.o $(LINUXFLAGSRELEASE)
-
-$(OBJ_DIR)/_My_Strcmp.o: MyAsmFunction/_My_Strcmp.s
-	nasm -f elf64 -l $(OBJ_DIR)/_My_Strcmp.lst MyAsmFunction/_My_Strcmp.s -o $(OBJ_DIR)/_My_Strcmp.o $(NASMFLAGS)
 
 $(OBJ_DIR)/HashTable.o: HashTable/HashTable.cpp HashTable/HashTable.h HashTable/DumpHashTable.h List/List.h
 	@$(CC) -c HashTable/HashTable.cpp -o $(OBJ_DIR)/HashTable.o $(LINUXFLAGSRELEASE)
 
 $(OBJ_DIR)/DumpHashTable.o: HashTable/DumpHashTable.cpp HashTable/DumpHashTable.h HashTable/HashTable.h List/List.h
 	@$(CC) -c HashTable/DumpHashTable.cpp -o $(OBJ_DIR)/DumpHashTable.o $(LINUXFLAGSRELEASE)
+
+$(OBJ_DIR)/InputData.o: HashTable/InputData.cpp HashTable/InputData.h
+	@$(CC) -c HashTable/InputData.cpp -o $(OBJ_DIR)/InputData.o $(LINUXFLAGSRELEASE)
 
 $(OBJ_DIR)/List.o: List/List.cpp List/List.h
 	@$(CC) -c List/List.cpp -o $(OBJ_DIR)/List.o $(LINUXFLAGSRELEASE)

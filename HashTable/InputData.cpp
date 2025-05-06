@@ -12,9 +12,9 @@
 #include "../common/colors.h"
 #include "InputData.h"
 
-int MakePointers (array_my_key_t Ongn, char* namefile)
+int MakePointers (array_my_key_t* array_pointers, const char* namefile)
 {
-    if (!InputOnegin (Ongn.Onegin, &Ongn.sizeOfFile, namefile))
+    if (!InputOnegin (array_pointers, namefile))
     {
         return -1;
     }
@@ -45,55 +45,55 @@ int MakePointers (array_my_key_t Ongn, char* namefile)
     return 1;
 }
 
-bool InputOnegin (char** Onegin, size_t* sizeOfFile, const char* nameFile)
+bool InputOnegin (array_my_key_t* array_pointers, const char* namefile)
 {
-    struct stat fileInf = {};
+    struct stat file_inf = {};
 
-    if (!SizeFile (&fileInf, nameFile))
+    if (!SizeFile (&file_inf, namefile))
     {
         fprintf (stderr, "Error SizeFile!");
 
         exit (0);
     }
 
-    *Onegin = (char*)calloc (fileInf.st_size + 1, sizeof(char));
+    array_pointers->text = (char*) calloc (file_inf.st_size, sizeof(*array_pointers->text));
 
-    if (*Onegin == NULL)
+    if (array_pointers->text == NULL)
     {
-        fprintf (stderr, "Onegin = NULL");
+        fprintf (stderr, RED "ERROR: calloc array_pointers->text return NULL\n" RESET);
 
         exit (0);
     }
 
-    FILE* file = fopen (nameFile, "rt");
+    FILE* binary_file = fopen (namefile, "rb");
 
-    if (file == NULL)
+    if (binary_file == NULL)
     {
-        fprintf (stderr, "File opening error\n");
+        fprintf (stderr, RED "ERROR: binary_file <%s> opening error\n" RESET, namefile);
 
         printf("errno = <%d>\n", errno);
 
-        perror(nameFile);
+        perror(namefile);
 
         exit (0);
     }
 
-    *sizeOfFile = fread (*Onegin, sizeof (char), fileInf.st_size, file); // с помощью fread читаю файл в буффер, сохраняю возвращаемое значение fread ()
+    array_pointers->size_file = fread (array_pointers->text, sizeof (*array_pointers->text), file_inf.st_size, binary_file);
 
-    if (*sizeOfFile == 0)
+    if (array_pointers->size_file == 0)
     {
         printf ("errno = <%d>\n", errno);
 
-        perror (nameFile);
+        perror (namefile);
 
         exit (0);
     }
 
-    printf ("\n%s\n", *Onegin);                                      // вывожу начальный текст Онегина
+    printf ("\n%s\n", array_pointers->text);
 
-    fclose (file);                                                   // закрываю файл
+    fclose (binary_file);
 
-    printf ("sizeOfFile = <%d>\n\n", *sizeOfFile);
+    printf ("array_pointers->size_file = <%d>\n\n", array_pointers->size_file);
 
     return 1;
 }
@@ -136,7 +136,7 @@ bool SizeFile (struct stat* fileInf, const char* nameFile)
     return 1;
 }
 
-void InitialisatorPointers (size_t sizeOfFile, PTR** Pointers, char* Onegin, struct PTR* ParamString , int* nPointer)
+void InitialisatorPointers (size_t sizeOfFile, char* Onegin, int* nPointer)
 {
     fprintf (stderr, GRN "\nInitialization of Pointers:\n\n" RESET);
 

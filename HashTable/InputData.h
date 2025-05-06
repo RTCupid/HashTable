@@ -3,20 +3,20 @@
 
 typedef struct array_my_key_t
 {
-    char*      Onegin;
-    size_t      sizeOfFile;
-    int*        nPointer;
-    char**      Pointers;
+    char*       text;
+    size_t      size_file;
+    int*        number_of_pointers;
+    char**      pointers;
 } array_my_key_t;
 
-int     MakePointers            (array_my_key_t Ongn, PTR* ParamString);
+int     MakePointers            (array_my_key_t* array_pointers, const char* namefile);
 
-bool    InputOnegin             (char** Onegin, size_t* sizeOfFile, const char* nameFile);
+bool    InputOnegin             (array_my_key_t* array_pointers, const char* namefile);
 
 void    CounterSymbol           (int* nRows, char* Onegin, size_t sizeOfFile, char symbol);
 
 bool    SizeFile                (struct stat* fileInf, const char* nameFile);
 
-void    InitialisatorPointers   (size_t sizeOfFile, PTR** Pointers, char* Onegin, struct PTR* ParamString , int* nPointer);
+void    InitialisatorPointers   (size_t sizeOfFile, char* Onegin, int* nPointer);
 
 #endif
