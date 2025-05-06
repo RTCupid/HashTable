@@ -11,41 +11,34 @@
 
 #include "../common/colors.h"
 #include "InputData.h"
+#include "HashTable/HashTable.h"
 
-int MakePointers (array_my_key_t* array_pointers, const char* namefile)
+int MakeArrayPointers (array_my_key_t* array_pointers, const char* namefile)
 {
-    if (!InputOnegin (array_pointers, namefile))
+    if (!InputBinaryFile (array_pointers, namefile))
     {
         return -1;
     }
 
-    int nRows = 0;
+    size_t number_words = ((size_t) array_pointers->size_file / MAX_SIZE_WORD) + 1;
 
-    char symbol = '\n';
+    array_pointers->pointers = (char**) calloc (number_words, sizeof (*array_pointers->pointers));
 
-    CounterSymbol (&nRows, *Ongn.Onegin, Ongn.sizeOfFile, symbol);
+    fprintf (stderr, "array_pointers->pointers = <%p>\n", array_pointers->pointers);
 
-    *Ongn.Pointers = (PTR*)calloc (nRows * 2, sizeof (char*));        // каллокаю массив указателей
-
-    printf ("Ongn.Pointers = <%p>\n", *Ongn.Pointers);
-
-    if (Ongn.Pointers == NULL)
+    if (array_pointers->pointers == NULL)
     {
-        printf ("Error calloc Pointers");
+        fprintf (stderr, RED "ERROR: calloc array_pointers->pointers return NULL");
 
         return -1;
     }
 
-    printf ("Ongn.Pointers = <%p>\n", *Ongn.Pointers);
+    InitialisatorPointers (array_pointers);
 
-    InitialisatorPointers (Ongn.sizeOfFile, Ongn.Pointers, *Ongn.Onegin, ParamString, Ongn.nPointer);
-
-    printf ("nPointer = <%d>\n", *Ongn.nPointer);
-
-    return 1;
+    return 0;
 }
 
-bool InputOnegin (array_my_key_t* array_pointers, const char* namefile)
+bool InputBinaryFile (array_my_key_t* array_pointers, const char* namefile)
 {
     struct stat file_inf = {};
 
@@ -98,26 +91,6 @@ bool InputOnegin (array_my_key_t* array_pointers, const char* namefile)
     return 1;
 }
 
-void CounterSymbol (int* nRows, char* Onegin, size_t sizeOfFile, char symbol)
-{
-    for (unsigned int i = 0; i < sizeOfFile; i++)                    // посимвольно зачем-то вывожу начальный текст Онегина
-    {                                                            // точно, я не просто вывожу, а параллельно считаю количество
-        assert (i < sizeOfFile);
-
-        if (Onegin[i] == symbol)                                     // строк, равное кличеству '\n'
-        {
-            printf ("Onegin[%d] = <'%c'>\n", i, symbol);
-            *nRows = *nRows + 1;
-        }
-        else
-        {
-            printf ("Onegin[%d] = <%c>\n", i, Onegin[i]);
-        }
-    }
-
-    printf ("nRow = <%d>\n", *nRows);
-}
-
 bool SizeFile (struct stat* fileInf, const char* nameFile)
 {
     int err = stat (nameFile, fileInf);
@@ -136,37 +109,20 @@ bool SizeFile (struct stat* fileInf, const char* nameFile)
     return 1;
 }
 
-void InitialisatorPointers (size_t sizeOfFile, char* Onegin, int* nPointer)
+void InitialisatorPointers (array_my_key_t* array_pointers)
 {
     fprintf (stderr, GRN "\nInitialization of Pointers:\n\n" RESET);
 
-    printf ("&ParamString = <%p>\n", ParamString);
-    printf ("&Pointers    = <%p>\n", *Pointers);
-
-    printf ("Onegin = <%p>\n", Onegin);
-
-    ParamString->PtrStart = Onegin;
-
-    for (unsigned int i = 0; i < sizeOfFile; i++)
+    for (unsigned int i = 0; i < array_pointers->size_file; i += MAX_SIZE_WORD)
     {
         printf ("i = <%d>\n", i);
 
-        assert (i < sizeOfFile);
+        assert (i < array_pointers->size_file);
 
-        printf ("nPointer = <%d>\n", *nPointer);
+        array_pointers->pointers = array_pointers->text + i;
 
-        if (Onegin[i] == '\n')
-        {
-            printf ("nPointer = <%d>\n", *nPointer);
+        fprintf (stderr, BLU " array_pointers->pointers  = %p" RESET, array_pointers->pointers);
 
-            (*Pointers)[*nPointer] = *ParamString;
-
-            printf (" Pointers[i].PtrStart = <%p>\n", ((*Pointers)[*nPointer]).PtrStart);
-
-            *nPointer = *nPointer + 1;
-            ParamString->PtrStart = &Onegin[i + 1];
-        }
+        fprintf (stderr, YEL "[array_pointers->pointers] = %s" RESET, (char*)array_pointers->pointers);
     }
-
-    printf ("nPointer = <%d>\n", *nPointer);
 }

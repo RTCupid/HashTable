@@ -11,6 +11,7 @@
 
 #include "../common/colors.h"
 #include "HashTable.h"
+#include "InputData.h"
 #include "../List/List.h"
 #include "DumpHashTable.h"
 
@@ -28,7 +29,7 @@ err_t HashTableCtor (hshtbl_t* hashtable)
     return OK;
 }
 
-err_t RunHashTable (hshtbl_t* hashtable, my_key_t* keys, mode_hashtable_t mode)
+err_t RunHashTable (hshtbl_t* hashtable, array_my_key_t* array_pointers, mode_hashtable_t mode)
 {
     size_t offset      = 0;
     size_t index       = 0;

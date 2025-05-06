@@ -4,6 +4,8 @@
 #include <stdint.h>
 #include <immintrin.h>
 
+struct array_my_key_t;
+
 #define HASHTABLE_DBG if(0)
 #define PRINTF_IF_FIND if(0)
 
@@ -67,12 +69,10 @@ err_t       CreateBufferText    (char * namefile, size_t* size_text, int* buffer
 
 err_t       CreateHashTable     (hshtbl_t* hashtable);
 
-err_t       ProcessMeasurings   (hshtbl_t* hashtable, size_t ntimes);
-
 uint32_t    murmurhash3         (const void* key, size_t len);
 
 err_t       SearchHashTable     (hshtbl_t* hashtable, my_key_t key, size_t len_of_key, mode_hashtable_t mode);
 
-err_t       RunHashTable        (hshtbl_t* hashtable, my_key_t* keys, mode_hashtable_t mode);
+err_t       RunHashTable        (hshtbl_t* hashtable, array_my_key_t* array_pointers, mode_hashtable_t mode);
 
 #endif

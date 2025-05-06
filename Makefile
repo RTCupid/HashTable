@@ -23,22 +23,22 @@ BIN_DIR = ./build/bin
 OBJ_DIR = ./build/obj
 
 $(BIN_DIR)/a.exe: $(OBJ_DIR)/main.o $(OBJ_DIR)/HashTable.o $(OBJ_DIR)/List.o $(OBJ_DIR)/DumpHashTable.o InputData.o
-	$(CC) $(OBJ_DIR)/main.o $(OBJ_DIR)/HashTable.o $(OBJ_DIR)/List.o $(OBJ_DIR)/_My_Strcmp.o $(OBJ_DIR)/DumpHashTable.o -o $(BIN_DIR)/a.exe $(LINUXFLAGSRELEASE)
+	$(CC) $(OBJ_DIR)/main.o $(OBJ_DIR)/HashTable.o $(OBJ_DIR)/List.o $(OBJ_DIR)/_My_Strcmp.o $(OBJ_DIR)/DumpHashTable.o -o $(BIN_DIR)/a.exe $(LINUXFLAGSDEBUG)
 
 $(OBJ_DIR)/main.o: main.cpp HashTable/HashTable.h HashTable/InputData.h
-	@$(CC) -c main.cpp -o $(OBJ_DIR)/main.o $(LINUXFLAGSRELEASE)
+	@$(CC) -c main.cpp -o $(OBJ_DIR)/main.o $(LINUXFLAGSDEBUG)
 
 $(OBJ_DIR)/HashTable.o: HashTable/HashTable.cpp HashTable/HashTable.h HashTable/DumpHashTable.h List/List.h
-	@$(CC) -c HashTable/HashTable.cpp -o $(OBJ_DIR)/HashTable.o $(LINUXFLAGSRELEASE)
+	@$(CC) -c HashTable/HashTable.cpp -o $(OBJ_DIR)/HashTable.o $(LINUXFLAGSDEBUG)
 
 $(OBJ_DIR)/DumpHashTable.o: HashTable/DumpHashTable.cpp HashTable/DumpHashTable.h HashTable/HashTable.h List/List.h
-	@$(CC) -c HashTable/DumpHashTable.cpp -o $(OBJ_DIR)/DumpHashTable.o $(LINUXFLAGSRELEASE)
+	@$(CC) -c HashTable/DumpHashTable.cpp -o $(OBJ_DIR)/DumpHashTable.o $(LINUXFLAGSDEBUG)
 
 $(OBJ_DIR)/InputData.o: HashTable/InputData.cpp HashTable/InputData.h
-	@$(CC) -c HashTable/InputData.cpp -o $(OBJ_DIR)/InputData.o $(LINUXFLAGSRELEASE)
+	@$(CC) -c HashTable/InputData.cpp -o $(OBJ_DIR)/InputData.o $(LINUXFLAGSDEBUG)
 
 $(OBJ_DIR)/List.o: List/List.cpp List/List.h
-	@$(CC) -c List/List.cpp -o $(OBJ_DIR)/List.o $(LINUXFLAGSRELEASE)
+	@$(CC) -c List/List.cpp -o $(OBJ_DIR)/List.o $(LINUXFLAGSDEBUG)
 
 clean:
 	rm -f main $(OBJ_DIR)/*.o $(BIN_DIR)/*.exe
