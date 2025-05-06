@@ -1,4 +1,3 @@
-#include <time.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/types.h>
@@ -29,29 +28,7 @@ err_t HashTableCtor (hshtbl_t* hashtable)
     return OK;
 }
 
-err_t ProcessMeasurings (hshtbl_t* hashtable, size_t ntimes, size_t npoints)
-{
-    for (size_t points = 0; points < npoints; points++)
-    {
-        clock_t start_search_time = clock ();
-
-        for (size_t times = 0; times < ntimes; times++)
-        {
-            RunHashTable (hashtable, TEST);
-        }
-
-        clock_t end_search_time = clock ();
-
-        double cpu_time_used    = ((double) (end_search_time - start_search_time)) / CLOCKS_PER_SEC;
-
-        printf  (               "Search time: %f s\n", cpu_time_used);
-        fprintf (hashtable->Measurings_file, "%f  \n", cpu_time_used);
-    }
-
-    return OK;
-}
-
-err_t RunHashTable (hshtbl_t* hashtable, mode_hashtable_t mode)
+err_t RunHashTable (hshtbl_t* hashtable, my_key_t* keys, mode_hashtable_t mode)
 {
     size_t offset      = 0;
     size_t index       = 0;
@@ -75,26 +52,6 @@ err_t RunHashTable (hshtbl_t* hashtable, mode_hashtable_t mode)
         if (index >= size_text)
         {
             break;
-        }
-
-        my_key_t key = (my_key_t) aligned_alloc (MAX_SIZE_WORD, sizeof (*key));
-
-        if (key != NULL)
-        {
-            memset (key, 0, MAX_SIZE_WORD);
-        }
-
-        offset   = 0;
-        word_len = 0;
-
-        while ((text_buffer + index)[offset] != '\n' && index + offset < size_text)
-        {
-            if (offset < MAX_SIZE_WORD)
-            {
-                *((char*)key + offset) = (text_buffer + index)[offset];
-                word_len++;
-            }
-            offset++;
         }
 
         *((char*)key + MAX_SIZE_WORD - 1) = '\0';

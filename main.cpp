@@ -1,3 +1,4 @@
+#include <time.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -23,22 +24,30 @@ int main (int argc, char* argv[])
 
         HashTableCtor    (&hashtable);
 
-        RunHashTable    (&hashtable, LOAD);
+        RunHashTable    (&hashtable, keys, LOAD);
 
         printf (GRN "## Start searching:\n" RESET);
 
         CreateBufferText (argv[2], &(hashtable.size_test_text), &(hashtable.buffer_with_test_text_id), &(hashtable.buffer_with_test_text));
 
-        if (argc > 3)
+//------------------Tests-------------------------------------------------
+
+        clock_t start_search_time = clock ();
+
+        for (size_t times = 0; times < NTIMES; times++)
         {
-            ProcessMeasurings (&hashtable, NTIMES, (size_t) atoi (argv[3]));
-        }
-        else
-        {
-            ProcessMeasurings (&hashtable, NTIMES);
+            RunHashTable (hashtable, keys, TEST);
         }
 
-        HashTableDtor    (&hashtable);
+        clock_t end_search_time = clock ();
+
+        double cpu_time_used    = ((double) (end_search_time - start_search_time)) / CLOCKS_PER_SEC;
+
+        printf  (               "Search time: %f s\n", cpu_time_used);
+        fprintf (hashtable.Measurings_file, "%f  \n", cpu_time_used);
+
+//------------------------------------------------------------------------
+        HashTableDtor     (&hashtable);
     }
     else
     {

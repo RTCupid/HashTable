@@ -48,9 +48,11 @@ typedef struct hshtbl_t
     size_t    size_text;
     int       buffer_with_text_id;
     char*     buffer_with_text;
+
     size_t    size_test_text;
     int       buffer_with_test_text_id;
     char*     buffer_with_test_text;
+
     list_t*   HashTable;
     FILE*     log_file;
     FILE*     Measurings_file;
@@ -58,24 +60,24 @@ typedef struct hshtbl_t
 
 typedef __m128i* my_key_t;
 
-err_t       HashTableCtor     (hshtbl_t* hashtable);
+err_t       HashTableCtor       (hshtbl_t* hashtable);
 
-err_t       HashTableDtor     (hshtbl_t* hashtable);
+err_t       HashTableDtor       (hshtbl_t* hashtable);
 
-err_t       DeleteBufferText  (char* text_buffer, int text_buffer_id, size_t size_text);
+err_t       DeleteBufferText    (char* text_buffer, int text_buffer_id, size_t size_text);
 
-err_t       ClearHashTable    (hshtbl_t* hashtable);
+err_t       ClearHashTable      (hshtbl_t* hashtable);
 
-err_t       CreateBufferText  (char * namefile, size_t* size_text, int* buffer_with_text_id, char** buffer_with_text);
+err_t       CreateBufferText    (char * namefile, size_t* size_text, int* buffer_with_text_id, char** buffer_with_text);
 
-err_t       CreateHashTable   (hshtbl_t* hashtable);
+err_t       CreateHashTable     (hshtbl_t* hashtable);
 
-err_t       ProcessMeasurings (hshtbl_t* hashtable, size_t ntimes, size_t npoints = 1);
+err_t       ProcessMeasurings   (hshtbl_t* hashtable, size_t ntimes);
 
-uint32_t    murmurhash3    (const void* key, size_t len);
+uint32_t    murmurhash3         (const void* key, size_t len);
 
-err_t       SearchHashTable   (hshtbl_t* hashtable, my_key_t key, size_t len_of_key, mode_hashtable_t mode);
+err_t       SearchHashTable     (hshtbl_t* hashtable, my_key_t key, size_t len_of_key, mode_hashtable_t mode);
 
-err_t       RunHashTable      (hshtbl_t* hashtable, mode_hashtable_t mode);
+err_t       RunHashTable        (hshtbl_t* hashtable, my_key_t* keys, mode_hashtable_t mode);
 
 #endif
