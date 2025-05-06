@@ -9,9 +9,12 @@
 #include <stdlib.h>
 #include <errno.h>
 
-int MakePointers (MP Ongn, PTR* ParamString)
+#include "../common/colors.h"
+#include "InputData.h"
+
+int MakePointers (array_my_key_t Ongn, char* namefile)
 {
-    if (!InputOnegin (Ongn.Onegin, &Ongn.sizeOfFile, Ongn.nameFile))
+    if (!InputOnegin (Ongn.Onegin, &Ongn.sizeOfFile, namefile))
     {
         return -1;
     }
@@ -133,10 +136,9 @@ bool SizeFile (struct stat* fileInf, const char* nameFile)
     return 1;
 }
 
-
 void InitialisatorPointers (size_t sizeOfFile, PTR** Pointers, char* Onegin, struct PTR* ParamString , int* nPointer)
 {
-    printf ("\nInitialization of Pointers:\n\n");
+    fprintf (stderr, GRN "\nInitialization of Pointers:\n\n" RESET);
 
     printf ("&ParamString = <%p>\n", ParamString);
     printf ("&Pointers    = <%p>\n", *Pointers);
@@ -155,16 +157,11 @@ void InitialisatorPointers (size_t sizeOfFile, PTR** Pointers, char* Onegin, str
 
         if (Onegin[i] == '\n')
         {
-            ParamString->lenString = (Onegin + i - 1) - ParamString->PtrStart;
-
-            printf ("lenString = <%d>\n", ParamString->lenString);
-
             printf ("nPointer = <%d>\n", *nPointer);
 
             (*Pointers)[*nPointer] = *ParamString;
 
             printf (" Pointers[i].PtrStart = <%p>\n", ((*Pointers)[*nPointer]).PtrStart);
-            printf ("2\n");
 
             *nPointer = *nPointer + 1;
             ParamString->PtrStart = &Onegin[i + 1];

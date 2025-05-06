@@ -1,21 +1,15 @@
 #ifndef INPUTDATA_H
 #define INPUTDATA_H
 
-typedef struct PTR
+typedef struct array_my_key_t
 {
-    char* PtrStart;
-    int   lenString;
-} PTR;
-
-typedef struct MP
-{
-    char**      Onegin;
+    char*      Onegin;
     size_t      sizeOfFile;
     int*        nPointer;
-    PTR**       Pointers;
-} MP;
+    char**      Pointers;
+} array_my_key_t;
 
-int     MakePointers            (MP Ongn, PTR* ParamString);
+int     MakePointers            (array_my_key_t Ongn, PTR* ParamString);
 
 bool    InputOnegin             (char** Onegin, size_t* sizeOfFile, const char* nameFile);
 

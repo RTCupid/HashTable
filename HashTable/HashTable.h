@@ -45,17 +45,12 @@ const uint32_t COMPARE_M128_MASK = 0x0000FFFF;
 
 typedef struct hshtbl_t
 {
-    size_t    size_text;
-    int       buffer_with_text_id;
-    char*     buffer_with_text;
-
-    size_t    size_test_text;
-    int       buffer_with_test_text_id;
-    char*     buffer_with_test_text;
-
     list_t*   HashTable;
+
     FILE*     log_file;
+
     FILE*     Measurings_file;
+
 } hshtbl_t;
 
 typedef __m128i* my_key_t;
