@@ -51,6 +51,10 @@ int main (int argc, char* argv[])
         fprintf (hashtable.Measurings_file, "%f  \n", cpu_time_used);
 
 //------------------------------------------------------------------------
+        ArrayPointersDtor (&load_array_pointers);
+
+        ArrayPointersDtor (&test_array_pointers);
+
         HashTableDtor     (&hashtable);
     }
     else

@@ -13,6 +13,8 @@ typedef struct array_my_key_t
 
 int     ArrayPointersCtor       (array_my_key_t* array_pointers, const char* namefile);
 
+int     ArrayPointersDtor       (array_my_key_t* array_pointers);
+
 bool    InputBinaryFile         (array_my_key_t* array_pointers, const char* namefile);
 
 bool    SizeFile                (struct stat* fileInf, const char* nameFile);

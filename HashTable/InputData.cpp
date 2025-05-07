@@ -41,6 +41,17 @@ int ArrayPointersCtor (array_my_key_t* array_pointers, const char* namefile)
     return 0;
 }
 
+int ArrayPointersDtor (array_my_key_t* array_pointers)
+{
+    free (array_pointers->text);
+    array_pointers->text = NULL;
+
+    free (array_pointers->pointers);
+    array_pointers->pointers = NULL;
+
+    return 0;
+}
+
 bool InputBinaryFile (array_my_key_t* array_pointers, const char* namefile)
 {
     struct stat file_inf = {};
