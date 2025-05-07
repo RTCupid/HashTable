@@ -145,4 +145,6 @@ void InitialisatorPointers (array_my_key_t* array_pointers)
 
         index_pointer++;
     }
+
+    fprintf (stderr, GRN "\nEnd Initialization of Pointers\n\n" RESET);
 }

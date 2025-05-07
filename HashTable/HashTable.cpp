@@ -48,7 +48,7 @@ err_t LoadHashTable (hshtbl_t* hashtable, array_my_key_t* array_pointers)
 
         if (!FindInListValue (hashtable->HashTable[hash], *(array_pointers->pointers[index_pointer]), &status))
         {
-            printf  (MAG                                "value <%s> was not found in the List\n" RESET,
+            NOT_PROFILING printf  (MAG                  "value <%s> was not found in the List\n" RESET,
                                                                     (char*) array_pointers->pointers[index_pointer]);
             HASHTABLE_DBG fprintf (hashtable->log_file, "value <%s> was not found in the List\n",
                                                                     (char*) array_pointers->pointers[index_pointer]);
@@ -78,7 +78,7 @@ err_t LoadHashTable (hshtbl_t* hashtable, array_my_key_t* array_pointers)
 
 err_t RunHashTable  (hshtbl_t* hashtable, array_my_key_t* array_pointers)
 {
-    fprintf (stderr, GRN "Start Run HashTable\n" RESET);
+    NOT_PROFILING fprintf (stderr, GRN "Start Run HashTable\n" RESET);
 
     for (size_t index_pointer = 0; index_pointer < array_pointers->number_of_pointers; index_pointer++)
     {
@@ -95,7 +95,7 @@ err_t RunHashTable  (hshtbl_t* hashtable, array_my_key_t* array_pointers)
 
         if (!FindInListValue (hashtable->HashTable[hash], *(array_pointers->pointers[index_pointer]), &status))
         {
-            printf  (MAG                                "value <%s> was not found in the List\n" RESET,
+            NOT_PROFILING printf  (MAG                  "value <%s> was not found in the List\n" RESET,
                                                                     (char*) array_pointers->pointers[index_pointer]);
             HASHTABLE_DBG fprintf (hashtable->log_file, "value <%s> was not found in the List\n",
                                                                     (char*) array_pointers->pointers[index_pointer]);
@@ -107,7 +107,7 @@ err_t RunHashTable  (hshtbl_t* hashtable, array_my_key_t* array_pointers)
         }
     }
 
-    fprintf (stderr, GRN "Run HashTable Completed\n" RESET);
+    NOT_PROFILING fprintf (stderr, GRN "Run HashTable Completed\n" RESET);
 
     return OK;
 }
@@ -124,6 +124,7 @@ err_t CreateHashTable (hshtbl_t* hashtable)
     return OK;
 }
 
+__attribute__((noinline))
 uint32_t murmurhash3 (const void* key)
 {
     const    uint8_t* data = (const uint8_t*)key;

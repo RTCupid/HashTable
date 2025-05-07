@@ -6,6 +6,7 @@
 
 struct array_my_key_t;
 
+#define NOT_PROFILING if(1)
 #define HASHTABLE_DBG if(0)
 #define PRINTF_IF_FIND if(0)
 
@@ -63,13 +64,9 @@ err_t       HashTableDtor       (hshtbl_t* hashtable);
 
 err_t       ClearHashTable      (hshtbl_t* hashtable);
 
-err_t       CreateBufferText    (char * namefile, size_t* size_text, int* buffer_with_text_id, char** buffer_with_text);
-
 err_t       CreateHashTable     (hshtbl_t* hashtable);
 
 uint32_t    murmurhash3         (const void* key);
-
-err_t       SearchHashTable     (hshtbl_t* hashtable, my_key_t* key, mode_hashtable_t mode);
 
 err_t       LoadHashTable       (hshtbl_t* hashtable, array_my_key_t* array_pointers);
 
