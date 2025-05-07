@@ -24,15 +24,15 @@ int main (int argc, char* argv[])
 
         hshtbl_t hashtable = {};
 
-        InputBinaryFile (&load_array_pointers, "WarAndPeace.bin");
+        ArrayPointersCtor (&load_array_pointers, argv[1]);
 
-        HashTableCtor    (&hashtable);
+        HashTableCtor   (&hashtable);
 
-        RunHashTable    (&hashtable, &load_array_pointers, LOAD);
+        LoadHashTable   (&hashtable, &load_array_pointers);
 
         printf (GRN "## Start searching:\n" RESET);
 
-        InputBinaryFile (&test_array_pointers, "Pride.bin");
+        ArrayPointersCtor (&test_array_pointers, argv[2]);
 
 //------------------Tests-------------------------------------------------
 
@@ -40,7 +40,7 @@ int main (int argc, char* argv[])
 
         for (size_t times = 0; times < NTIMES; times++)
         {
-            RunHashTable (&hashtable, &test_array_pointers, TEST);
+            RunHashTable (&hashtable, &test_array_pointers);
         }
 
         clock_t end_search_time = clock ();

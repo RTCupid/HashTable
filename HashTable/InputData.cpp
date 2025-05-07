@@ -11,20 +11,23 @@
 
 #include "../common/colors.h"
 #include "InputData.h"
-#include "HashTable/HashTable.h"
+#include "HashTable.h"
 
-int MakeArrayPointers (array_my_key_t* array_pointers, const char* namefile)
+#define DBG if(0)
+
+int ArrayPointersCtor (array_my_key_t* array_pointers, const char* namefile)
 {
     if (!InputBinaryFile (array_pointers, namefile))
     {
         return -1;
     }
 
-    size_t number_words = ((size_t) array_pointers->size_file / MAX_SIZE_WORD) + 1;
+    array_pointers->number_of_pointers = (array_pointers->size_file / (size_t) MAX_SIZE_WORD);
 
-    array_pointers->pointers = (char**) calloc (number_words, sizeof (*array_pointers->pointers));
+    array_pointers->pointers           = (my_key_t**) calloc (array_pointers->number_of_pointers,
+                                                          sizeof (*array_pointers->pointers));
 
-    fprintf (stderr, "array_pointers->pointers = <%p>\n", array_pointers->pointers);
+    DBG fprintf (stderr, "array_pointers->pointers = <%p>\n", array_pointers->pointers);
 
     if (array_pointers->pointers == NULL)
     {
@@ -49,7 +52,7 @@ bool InputBinaryFile (array_my_key_t* array_pointers, const char* namefile)
         exit (0);
     }
 
-    array_pointers->text = (char*) calloc (file_inf.st_size, sizeof(*array_pointers->text));
+    array_pointers->text = (char*) calloc ((size_t) file_inf.st_size, sizeof(*array_pointers->text));
 
     if (array_pointers->text == NULL)
     {
@@ -71,7 +74,7 @@ bool InputBinaryFile (array_my_key_t* array_pointers, const char* namefile)
         exit (0);
     }
 
-    array_pointers->size_file = fread (array_pointers->text, sizeof (*array_pointers->text), file_inf.st_size, binary_file);
+    array_pointers->size_file = fread (array_pointers->text, sizeof (*array_pointers->text), (size_t) file_inf.st_size, binary_file);
 
     if (array_pointers->size_file == 0)
     {
@@ -82,11 +85,11 @@ bool InputBinaryFile (array_my_key_t* array_pointers, const char* namefile)
         exit (0);
     }
 
-    printf ("\n%s\n", array_pointers->text);
+    DBG fprintf (stderr, "\n%s\n", array_pointers->text);
 
     fclose (binary_file);
 
-    printf ("array_pointers->size_file = <%d>\n\n", array_pointers->size_file);
+    DBG fprintf (stderr, "array_pointers->size_file = <%lu>\n\n", array_pointers->size_file);
 
     return 1;
 }
@@ -102,9 +105,9 @@ bool SizeFile (struct stat* fileInf, const char* nameFile)
         return 0;
     }
 
-    printf ("\n%ld\n", (*fileInf).st_size);
+    DBG printf ("\n%ld\n", (*fileInf).st_size);
 
-    printf ("count of char = %ld\n", (*fileInf).st_size / sizeof (char));
+    DBG printf ("count of char = %lu\n", (size_t) (*fileInf).st_size / sizeof (char));
 
     return 1;
 }
@@ -113,16 +116,22 @@ void InitialisatorPointers (array_my_key_t* array_pointers)
 {
     fprintf (stderr, GRN "\nInitialization of Pointers:\n\n" RESET);
 
-    for (unsigned int i = 0; i < array_pointers->size_file; i += MAX_SIZE_WORD)
+    size_t index_pointer = 0;
+
+    for (size_t i = 0; i < array_pointers->size_file; i += MAX_SIZE_WORD)
     {
-        printf ("i = <%d>\n", i);
+        DBG printf ("i = <%lu>\n", i);
 
         assert (i < array_pointers->size_file);
 
-        array_pointers->pointers = array_pointers->text + i;
+        array_pointers->pointers[index_pointer] = (my_key_t*)(array_pointers->text + i);
 
-        fprintf (stderr, BLU " array_pointers->pointers  = %p" RESET, array_pointers->pointers);
+        DBG fprintf (stderr, BLU " array_pointers->pointers[index_pointer]  = %p\n" RESET,
+                                                            array_pointers->pointers[index_pointer]);
 
-        fprintf (stderr, YEL "[array_pointers->pointers] = %s" RESET, (char*)array_pointers->pointers);
+        DBG fprintf (stderr, MAG "[array_pointers->pointers] = %s\n" RESET,
+                                                            (char*)array_pointers->pointers[index_pointer]);
+
+        index_pointer++;
     }
 }

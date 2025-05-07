@@ -8,9 +8,6 @@
 err_t DumpHashTable (hshtbl_t hashtable, mode_print_hashtable_t mode)
 {
     fprintf (stderr, CYN "-Dump-------------------------------------------------------------------------\n" RESET);
-    fprintf (stderr, CYN "hashtable.buffer_with_text    = %p \n" RESET, hashtable.buffer_with_text);
-    fprintf (stderr, CYN "hashtable.buffer_with_text_id = %d \n" RESET, hashtable.buffer_with_text_id);
-    fprintf (stderr, CYN "hashtable.size_text           = %lu\n" RESET, hashtable.size_text);
     fprintf (stderr, CYN "hashtable.HashTable           = %p \n" RESET, hashtable.HashTable);
 
     PrintHashTable (hashtable, mode);
@@ -45,7 +42,7 @@ err_t PrintList (list_t list)
 {
     for (size_t index = 0; list.next[index] != -1;)
     {
-        fprintf (stderr, CYN "list.data[%lu] = %s\n" RESET, index, (char*) list.data[index]);
+        fprintf (stderr, CYN "list.data[%lu] = %s\n" RESET, index, (char*) list.data + index);
 
         if (list.next[index] == 0)
         {

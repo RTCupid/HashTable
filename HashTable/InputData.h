@@ -7,11 +7,11 @@ typedef struct array_my_key_t
 {
     char*       text;
     size_t      size_file;
-    int*        number_of_pointers;
-    my_key_t*   pointers;
+    size_t      number_of_pointers;
+    my_key_t**  pointers;
 } array_my_key_t;
 
-int     MakeArrayPointers       (array_my_key_t* array_pointers, const char* namefile);
+int     ArrayPointersCtor       (array_my_key_t* array_pointers, const char* namefile);
 
 bool    InputBinaryFile         (array_my_key_t* array_pointers, const char* namefile);
 

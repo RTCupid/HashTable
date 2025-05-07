@@ -8,7 +8,7 @@
 
 typedef struct list_t
 {
-    my_key_t*    data;
+    my_key_t*   data;
     int*        next;
     int*        prev;
     int         free;
@@ -32,13 +32,13 @@ errlst_t ListCtor           (list_t* List);
 
 errlst_t ListDtor           (list_t* List);
 
-errlst_t ListAddAfter       (list_t* List, int anch, my_key_t key);
+errlst_t ListAddAfter       (list_t* List, int anch, my_key_t* key);
 
-errlst_t ListAddBefore      (list_t* List, int anch, my_key_t key);
+errlst_t ListAddBefore      (list_t* List, int anch, my_key_t* key);
 
-errlst_t ListAddFairy       (list_t* List, my_key_t key);
+errlst_t ListAddFairy       (list_t* List, my_key_t* key);
 
-errlst_t ListAddTail        (list_t* List, my_key_t key);
+errlst_t ListAddTail        (list_t* List, my_key_t* key);
 
 errlst_t ListDel            (list_t* List, int anch);
 

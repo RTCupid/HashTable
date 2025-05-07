@@ -55,13 +55,11 @@ typedef struct hshtbl_t
 
 } hshtbl_t;
 
-typedef __m128i* my_key_t;
+typedef __m128i my_key_t;
 
 err_t       HashTableCtor       (hshtbl_t* hashtable);
 
 err_t       HashTableDtor       (hshtbl_t* hashtable);
-
-err_t       DeleteBufferText    (char* text_buffer, int text_buffer_id, size_t size_text);
 
 err_t       ClearHashTable      (hshtbl_t* hashtable);
 
@@ -69,10 +67,12 @@ err_t       CreateBufferText    (char * namefile, size_t* size_text, int* buffer
 
 err_t       CreateHashTable     (hshtbl_t* hashtable);
 
-uint32_t    murmurhash3         (const void* key, size_t len);
+uint32_t    murmurhash3         (const void* key);
 
-err_t       SearchHashTable     (hshtbl_t* hashtable, my_key_t key, size_t len_of_key, mode_hashtable_t mode);
+err_t       SearchHashTable     (hshtbl_t* hashtable, my_key_t* key, mode_hashtable_t mode);
 
-err_t       RunHashTable        (hshtbl_t* hashtable, array_my_key_t* array_pointers, mode_hashtable_t mode);
+err_t       LoadHashTable       (hshtbl_t* hashtable, array_my_key_t* array_pointers);
+
+err_t       RunHashTable        (hshtbl_t* hashtable, array_my_key_t* array_pointers);
 
 #endif
