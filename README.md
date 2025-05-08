@@ -150,6 +150,119 @@ if __name__ == "__main__":
 <div align="center"><img src="img/Third/ThirdVersionAfterChangeInputData.png"></div><br>
   <div align="center"> Рис. 10. Фрагмент профиля, полученного инстументом perf, третьей версии программы для быстрого поиска количества вхождений слова в текст с ключом оптимизации -O3, с моей inline функцией MyStrcmp, реализованной с использованием интринсиков, после переписывания на хранение слов в формате __m128i и изменения входных данных с текстового файла, в котором на каждую строку приходилось одно слово, на бинарный файл с форматированием всех слов до длины 16 байт, расположенных вподряд. К функции кэша добавлен аттрибут noinline.</div><br>
 
+Затем по профилю perf я определил, что больше всего времени занимает функция поиска элемента в списке. Внутри списка организован поиск линейным перебором. Для хорошей хэш-таблицы это время достаточно мало, так как её load-фактор составляет 1.5 - 2 слова на корзину. Для хэш-таблицы, используемой в проекте load-фактор был взят в десятикратном размере, как раз для того, чтобы получить возможность оптимизировать функцию поиска элемента в списке. В качестве оптимизации я переписал функцию поиска `FindInListValue` на языке ассемблера. Ниже приведена моя функция поиска элемента в списке на С++:
+
+```C++
+int FindInListValue (list_t* List, my_key_t* key, int* status)
+{
+    int index = 0;
+
+    if (List->next[index] != 0)
+    {
+        index = List->next[index];
+
+        *status = 1;
+
+        while (1)
+        {
+            uint32_t result_of_compare = MyStrcmp (List->data[index], *key);
+
+            if (result_of_compare == COMPARE_M128_MASK)
+            {
+                return index;
+            }
+            else
+            {
+                if (List->next[index] == 0)
+                {
+                    break;
+                }
+
+                index   = List->next[index];
+            }
+        }
+    }
+
+    return 0;
+}
+```
+и её версия на ассемблере NASM `_My_FindInListValue`:
+```NASM
+;--------------------------------------------------------------------------------------------------
+; _My_FindInListValue my function FindInListValue optimized in assembly
+;
+; Entry:    rdi  = pointer to list_t List (list_t*)
+;------------------------------------------------------------
+;           typedef __m128i my_key_t;                       |
+;                                                           |
+;           typedef struct list_t                           |
+;           {                                               |
+;               int         free;                           |
+;               int*        next;                           |
+;               int*        prev;                           |
+;               my_key_t*   data;                           |
+;           } list_t;                                       |
+;------------------------------------------------------------
+;           rsi  = pointer to my_key_t key       (__m128i*)
+;           rdx  = pointer to status             (int*)
+;
+; Exit:     rax  = key index if found, or 0 if not found
+;
+; Destroy:  rsi, rcx, rax, rdx, r8, rdi, xmm1, xmm0
+;--------------------------------------------------------------------------------------------------
+_My_FindInListValue:
+            mov  r8,  qword [rdi + 8]                       ; r8     = List->next, 8 - offset of next
+            mov  eax, dword [r8]                            ; index  = List->next[0]
+
+            test eax, eax                                   ; if (index == 0)
+                                                            ; {
+            je   .End_My_FindInListValue_return_0           ;       goto .End_My_FindInListValue_return_0;
+                                                            ; }
+            mov dword [rdx], 1                              ; status = 1
+
+            mov  rdi, qword [rdi + 0x18]                    ; rdx = List->data, 0x18 - offset of data
+
+            movdqa  xmm1, [rsi]                             ; xmm0 = key
+
+            jmp  .While_loop
+
+.While_test:                                                 ; while (1)
+                                                            ; {
+;--------------------test-------------------
+            mov  eax, dword [r8 + rdx * 4]                  ;   index = List->next[index]
+
+            test eax, eax                                   ;   if (index == 0)
+                                                            ;   {
+            je  .End_My_FindInListValue_return_0            ;       goto .End_My_FindInListValue_return_0;
+                                                            ;   }
+;--------------------loop-------------------
+.While_loop:
+
+            movsxd rdx, eax                                 ;   rdx  = eax
+            mov    rcx, rdx                                 ;   rcx  = rdx
+            shl rcx, 4                                      ;   rcx *= 16, offset to read from List->data[index]
+
+            vpcmpeqd  xmm0, xmm1, [rdi + rcx]               ;   __m128i result_of_compare = _mm_cmpeq_epi32  (List->data[index], key);
+
+            vpmovmskb ecx,  xmm0                            ;   uint32_t mask = (uint32_t) _mm_movemask_epi8 (result_of_compare);
+
+            cmp  ecx, 0xffff                                ;   if (result_of_compare != COMPARE_M128_MASK)
+                                                            ;   {
+            jne   .While_test                                ;       goto .While_test ;
+                                                            ;   }
+                                                            ;   else
+            ret                                             ;       return index
+                                                            ; }
+.End_My_FindInListValue_return_0:
+
+            xor rax, rax                                    ; index = 0;
+
+            ret                                             ; return index;
+
+;-----------End-_My_FindInListValue-------------------------------------------------------------------------
+```
+  
+
 По результатам оптимизации времени поиска 75 ⋅ 10⁶ слов в хэш-таблице, состоящей из ≈ 20 000 уникальных слов, составил таблицу (см. табл. 1).
 
 | Версия (характеризуется номером ассемблерной оптимизации) | Среднее время поиска 75 ⋅ 10⁶ слов в хэш-таблице, состоящей из ≈ 20 000 уникальных слов, полученное из 20 отдельных измерений, с | Ускорение (по сравнению с первой версией с оптимизацией -O3)|
