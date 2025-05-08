@@ -46,7 +46,7 @@ err_t LoadHashTable (hshtbl_t* hashtable, array_my_key_t* array_pointers)
 
         int    status = 0;
 
-        if (!FindInListValue (hashtable->HashTable[hash], *(array_pointers->pointers[index_pointer]), &status))
+        if (!FindInListValue (&(hashtable->HashTable[hash]), *(array_pointers->pointers[index_pointer]), &status))
         {
             NOT_PROFILING printf  (MAG                  "value <%s> was not found in the List\n" RESET,
                                                                     (char*) array_pointers->pointers[index_pointer]);
@@ -93,7 +93,7 @@ err_t RunHashTable  (hshtbl_t* hashtable, array_my_key_t* array_pointers)
 
         int    status = 0;
 
-        if (!FindInListValue (hashtable->HashTable[hash], *(array_pointers->pointers[index_pointer]), &status))
+        if (!FindInListValue (&(hashtable->HashTable[hash]), *(array_pointers->pointers[index_pointer]), &status))
         {
             NOT_PROFILING printf  (MAG                  "value <%s> was not found in the List\n" RESET,
                                                                     (char*) array_pointers->pointers[index_pointer]);

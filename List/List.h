@@ -40,7 +40,7 @@ errlst_t ListAddFairy       (list_t* List, my_key_t* key);
 
 errlst_t ListAddTail        (list_t* List, my_key_t* key);
 
-int      FindInListValue    (list_t List, my_key_t key, int* status);
+int      FindInListValue    (list_t* List, my_key_t key, int* status);
 
 inline uint32_t MyStrcmp    (my_key_t first_string, my_key_t second_string);
 

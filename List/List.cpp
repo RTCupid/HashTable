@@ -98,19 +98,19 @@ errlst_t ListAddBefore (list_t* List, int anch, my_key_t* value)
     return error;
 }
 
-int FindInListValue (list_t List, my_key_t key, int* status)
+int FindInListValue (list_t* List, my_key_t key, int* status)
 {
     int index = 0;
 
-    if (List.next[index] != 0)
+    if (List->next[index] != 0)
     {
-        index = List.next[index];
+        index = List->next[index];
 
         *status = 1;
 
         while (1)
         {
-            uint32_t result_of_compare = MyStrcmp (List.data[index], key);
+            uint32_t result_of_compare = MyStrcmp (List->data[index], key);
 
             if (result_of_compare == COMPARE_M128_MASK)
             {
@@ -118,12 +118,12 @@ int FindInListValue (list_t List, my_key_t key, int* status)
             }
             else
             {
-                if (List.next[index] == 0)
+                if (List->next[index] == 0)
                 {
                     break;
                 }
 
-                index   = List.next[index];
+                index   = List->next[index];
             }
         }
     }
