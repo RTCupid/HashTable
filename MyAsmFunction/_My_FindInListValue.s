@@ -7,6 +7,7 @@ section     .text
 
 global      _My_FindInListValue                             ; predefine func for linker
 
+align 16
 ;--------------------------------------------------------------------------------------------------
 ; _My_FindInListValue my function FindInListValue optimized in assembly
 ;
