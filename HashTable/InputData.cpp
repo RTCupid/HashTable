@@ -24,8 +24,7 @@ int ArrayPointersCtor (array_my_key_t* array_pointers, const char* namefile)
 
     array_pointers->number_of_pointers = (array_pointers->size_file / (size_t) MAX_SIZE_WORD);
 
-    array_pointers->pointers           = (my_key_t**) calloc (array_pointers->number_of_pointers,
-                                                          sizeof (*array_pointers->pointers));
+    array_pointers->pointers           = (my_key_t**) calloc (array_pointers->number_of_pointers, sizeof (*array_pointers->pointers));
 
     DBG fprintf (stderr, "array_pointers->pointers = <%p>\n", array_pointers->pointers);
 
@@ -63,7 +62,7 @@ bool InputBinaryFile (array_my_key_t* array_pointers, const char* namefile)
         exit (0);
     }
 
-    array_pointers->text = (char*) calloc ((size_t) file_inf.st_size, sizeof(*array_pointers->text));
+    array_pointers->text = (char*) aligned_alloc (MAX_SIZE_WORD, (size_t) file_inf.st_size * sizeof(*array_pointers->text));
 
     if (array_pointers->text == NULL)
     {

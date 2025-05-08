@@ -41,7 +41,7 @@ _My_FindInListValue:
 
             mov  rdi, qword [rdi + 0x18]                    ; rdx = List->data, 0x18 - offset of data
 
-            movaps  xmm1, [rsi]                             ; xmm0 = key
+            movdqa  xmm1, [rsi]                             ; xmm0 = key
 
             jmp  .While_loop
 
