@@ -26,9 +26,9 @@ align 16
 ;           rsi  = pointer to my_key_t key       (__m128i*)
 ;           rdx  = pointer to status             (int*)
 ;
-; Exit:     rax  = index of found key, or rax = 0, if don't found.
+; Exit:     rax = key index if found, or 0 if not found.
 ;
-; Destroy:  rsi, rcx, rax, rdx
+; Destroy:  rsi, rcx, rax, rdx, r8, rdi, xmm1, xmm0
 ;--------------------------------------------------------------------------------------------------
 _My_FindInListValue:
             mov  r8,  qword [rdi + 8]                       ; r8     = List->next, 8 - offset of next
