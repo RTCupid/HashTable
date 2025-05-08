@@ -6,7 +6,7 @@
 
 struct array_my_key_t;
 
-#define NOT_PROFILING if(0)
+#define NOT_PROFILING if(1)
 #define HASHTABLE_DBG if(0)
 #define PRINTF_IF_FIND if(0)
 

@@ -10,7 +10,18 @@ global      _My_FindInListValue                             ; predefine func for
 ;--------------------------------------------------------------------------------------------------
 ; _My_FindInListValue my function FindInListValue optimized in assembly
 ;
-; Entry:    rdi  = pointer to struct list_t List (list_t*)
+; Entry:    rdi  = pointer to list_t List (list_t*)
+;------------------------------------------------------------
+;           typedef __m128i my_key_t;                       |
+;                                                           |
+;           typedef struct list_t                           |
+;           {                                               |
+;               int         free;                           |
+;               int*        next;                           |
+;               int*        prev;                           |
+;               my_key_t*   data;                           |
+;           } list_t;                                       |
+;------------------------------------------------------------
 ;           rsi  = pointer to my_key_t key       (__m128i*)
 ;           rdx  = pointer to status             (int*)
 ;
@@ -19,51 +30,51 @@ global      _My_FindInListValue                             ; predefine func for
 ; Destroy:  rsi, rcx, rax, rdx
 ;--------------------------------------------------------------------------------------------------
 _My_FindInListValue:
-            xor  rax, rax                                   ; rax = 0, register for index
-
-            mov  eax, dword [rdi + offset_int_ptr_next]     ; index  = List->next[0]
+            mov  r8,  qword [rdi + 8]                       ; r8     = List->next
+            mov  eax, dword [r8]                            ; index  = List->next[0]
 
             test eax, eax                                   ; if (index == 0)
                                                             ; {
-            je   End_My_FindInListValue                     ;       goto End_My_FindInListValue;
+            je   End_My_FindInListValue_return_0            ;       goto End_My_FindInListValue_return_0;
                                                             ; }
-            mov dword [rdx], true                           ; status = 1
+            mov dword [rdx], 1                              ; status = 1
 
-            movaps  xmm0, [rsi]                             ; xmm0 = key
+            mov  rdi, qword [rdi + 0x18]                    ; rdx = List->data
 
-            lea  rdx, [rdi + offset_my_key_t_ptr_data]      ; rdx = List->data
-            lea  r8,  [rdi + offset_int_ptr_next]           ; r8  = List->next
+            movaps  xmm1, [rsi]                             ; xmm0 = key
 
-            jmp  While_true
+            jmp  While_loop
 
 While_test:                                                 ; while (1)
                                                             ; {
-
-            mov  eax, dword [r8 + rax * 8]                  ;   index = List->next[index]
+;--------------------test-------------------
+            mov  eax, dword [r8 + rdx * 4]                  ;   index = List->next[index]
 
             test eax, eax                                   ;   if (index == 0)
                                                             ;   {
             je  End_My_FindInListValue_return_0             ;       goto End_My_FindInListValue_return_0;
                                                             ;   }
-While_true:
-            mov r9, rax                                     ;   r9  = rax
-            shl r9, 4                                       ;   r9 *= 16, offset to read from List->data[index]
+;--------------------loop-------------------
+While_loop:
 
-            vpcmpeqd  xmm1, xmm0, [rdx + r9 * 1]            ;   __m128i result_of_compare = _mm_cmpeq_epi32   (List->data[index], key);
+            movsxd rdx, eax                                 ;   rdx  = eax
+            mov    rcx, rdx                                 ;   rcx  = rdx
+            shl rcx, 4                                      ;   rcx *= 16, offset to read from List->data[index]
 
-            vpmovmskb ecx,  xmm1                            ;   uint32_t mask = (uint32_t) _mm_movemask_epi8 (result_of_compare);
+            vpcmpeqd  xmm0, xmm1, [rdi + rcx]               ;   __m128i result_of_compare = _mm_cmpeq_epi32  (List->data[index], key);
 
-            cmp  ecx, COMPARE_M128_MASK                     ;   if (result_of_compare == COMPARE_M128_MASK)
+            vpmovmskb ecx,  xmm0                            ;   uint32_t mask = (uint32_t) _mm_movemask_epi8 (result_of_compare);
+
+            cmp  ecx, 0xffff                                ;   if (result_of_compare != COMPARE_M128_MASK)
                                                             ;   {
-            je   End_My_FindInListValue                     ;       goto End_My_FindInListValue;
+            jne   While_test                                ;       goto While_test ;
                                                             ;   }
-            jmp While_true                                  ; }
-
+                                                            ;   else
+            ret                                             ;       return index
+                                                            ; }
 End_My_FindInListValue_return_0:
 
             xor rax, rax                                    ; index = 0;
-
-End_My_FindInListValue:
 
             ret                                             ; return index;
 
@@ -73,11 +84,11 @@ section     .data
 
 true:                       equ 1                           ; true = 1
 
-offset_int_ptr_next:        equ 4                           ; offset of int*next
+offset_int_ptr_next:        equ 8                           ; offset of int*next
                                                             ; in struct list_t = 4
 
-offset_my_key_t_ptr_data:   equ 20                          ; offset of my_key_t* data
+offset_my_key_t_ptr_data:   equ 24                          ; offset of my_key_t* data
                                                             ; in struct list_t = 20
-COMPARE_M128_MASK:          equ 0x0000FFFF
+COMPARE_M128_MASK:          equ 0xFFFF
 
 section     .note.GNU-stack
