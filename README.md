@@ -249,9 +249,8 @@ _My_FindInListValue:
             cmp  ecx, 0xffff                                ;   if (result_of_compare != COMPARE_M128_MASK)
                                                             ;   {
             jne   .While_test                                ;       goto .While_test ;
-                                                            ;   }
-                                                            ;   else
-            ret                                             ;       return index
+                                                            ;   }                                            
+            ret                                             ;   else return index;       
                                                             ; }
 .End_My_FindInListValue_return_0:
 
