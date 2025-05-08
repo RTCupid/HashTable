@@ -30,32 +30,32 @@ global      _My_FindInListValue                             ; predefine func for
 ; Destroy:  rsi, rcx, rax, rdx
 ;--------------------------------------------------------------------------------------------------
 _My_FindInListValue:
-            mov  r8,  qword [rdi + 8]                       ; r8     = List->next
+            mov  r8,  qword [rdi + 8]                       ; r8     = List->next, 8 - offset of next
             mov  eax, dword [r8]                            ; index  = List->next[0]
 
             test eax, eax                                   ; if (index == 0)
                                                             ; {
-            je   End_My_FindInListValue_return_0            ;       goto End_My_FindInListValue_return_0;
+            je   .End_My_FindInListValue_return_0           ;       goto .End_My_FindInListValue_return_0;
                                                             ; }
             mov dword [rdx], 1                              ; status = 1
 
-            mov  rdi, qword [rdi + 0x18]                    ; rdx = List->data
+            mov  rdi, qword [rdi + 0x18]                    ; rdx = List->data, 0x18 - offset of data
 
             movaps  xmm1, [rsi]                             ; xmm0 = key
 
-            jmp  While_loop
+            jmp  .While_loop
 
-While_test:                                                 ; while (1)
+.While_test:                                                 ; while (1)
                                                             ; {
 ;--------------------test-------------------
             mov  eax, dword [r8 + rdx * 4]                  ;   index = List->next[index]
 
             test eax, eax                                   ;   if (index == 0)
                                                             ;   {
-            je  End_My_FindInListValue_return_0             ;       goto End_My_FindInListValue_return_0;
+            je  .End_My_FindInListValue_return_0            ;       goto .End_My_FindInListValue_return_0;
                                                             ;   }
 ;--------------------loop-------------------
-While_loop:
+.While_loop:
 
             movsxd rdx, eax                                 ;   rdx  = eax
             mov    rcx, rdx                                 ;   rcx  = rdx
@@ -67,28 +67,17 @@ While_loop:
 
             cmp  ecx, 0xffff                                ;   if (result_of_compare != COMPARE_M128_MASK)
                                                             ;   {
-            jne   While_test                                ;       goto While_test ;
+            jne   .While_test                                ;       goto .While_test ;
                                                             ;   }
                                                             ;   else
             ret                                             ;       return index
                                                             ; }
-End_My_FindInListValue_return_0:
+.End_My_FindInListValue_return_0:
 
             xor rax, rax                                    ; index = 0;
 
             ret                                             ; return index;
 
 ;-----------End-_My_FindInListValue-------------------------------------------------------------------------
-
-section     .data
-
-true:                       equ 1                           ; true = 1
-
-offset_int_ptr_next:        equ 8                           ; offset of int*next
-                                                            ; in struct list_t = 4
-
-offset_my_key_t_ptr_data:   equ 24                          ; offset of my_key_t* data
-                                                            ; in struct list_t = 20
-COMPARE_M128_MASK:          equ 0xFFFF
 
 section     .note.GNU-stack
