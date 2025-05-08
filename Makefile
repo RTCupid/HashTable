@@ -22,11 +22,14 @@ BIN_DIR = ./build/bin
 
 OBJ_DIR = ./build/obj
 
-$(BIN_DIR)/a.exe: $(OBJ_DIR)/main.o $(OBJ_DIR)/HashTable.o $(OBJ_DIR)/List.o $(OBJ_DIR)/DumpHashTable.o $(OBJ_DIR)/InputData.o
-	$(CC) $(OBJ_DIR)/main.o $(OBJ_DIR)/HashTable.o $(OBJ_DIR)/List.o $(OBJ_DIR)/InputData.o $(OBJ_DIR)/DumpHashTable.o -o $(BIN_DIR)/a.exe $(LINUXFLAGSRELEASE)
+$(BIN_DIR)/a.exe: $(OBJ_DIR)/main.o $(OBJ_DIR)/HashTable.o $(OBJ_DIR)/List.o $(OBJ_DIR)/DumpHashTable.o $(OBJ_DIR)/InputData.o $(OBJ_DIR)/_My_FindInListValue.o
+	$(CC) $(OBJ_DIR)/main.o $(OBJ_DIR)/HashTable.o $(OBJ_DIR)/List.o $(OBJ_DIR)/InputData.o $(OBJ_DIR)/DumpHashTable.o $(OBJ_DIR)/_My_FindInListValue.o -o $(BIN_DIR)/a.exe $(LINUXFLAGSRELEASE)
 
 $(OBJ_DIR)/main.o: main.cpp HashTable/HashTable.h HashTable/InputData.h
 	@$(CC) -c main.cpp -o $(OBJ_DIR)/main.o $(LINUXFLAGSRELEASE)
+
+$(OBJ_DIR)/_My_FindInListValue.o: ./MyAsmFunction/_My_FindInListValue.s
+	nasm -f elf64 -l $(OBJ_DIR)/_My_FindInListValue.lst ./MyAsmFunction/_My_FindInListValue.s -o $(OBJ_DIR)/_My_FindInListValue.o $(NASMFLAGS)
 
 $(OBJ_DIR)/HashTable.o: HashTable/HashTable.cpp HashTable/HashTable.h HashTable/DumpHashTable.h List/List.h
 	@$(CC) -c HashTable/HashTable.cpp -o $(OBJ_DIR)/HashTable.o $(LINUXFLAGSRELEASE)

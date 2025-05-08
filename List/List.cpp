@@ -8,8 +8,6 @@
 #include "List.h"
 #include "../HashTable/HashTable.h"
 
-extern "C" inline int _My_Strcmp (char* first_string, char* second_string);
-
 errlst_t ListCtor (list_t* List)
 {
     List->data = (my_key_t*) calloc (SIZE_LIST, sizeof (*List->data));
@@ -98,7 +96,7 @@ errlst_t ListAddBefore (list_t* List, int anch, my_key_t* value)
     return error;
 }
 
-int FindInListValue (list_t* List, my_key_t key, int* status)
+int FindInListValue (list_t* List, my_key_t* key, int* status)
 {
     int index = 0;
 
@@ -110,7 +108,7 @@ int FindInListValue (list_t* List, my_key_t key, int* status)
 
         while (1)
         {
-            uint32_t result_of_compare = MyStrcmp (List->data[index], key);
+            uint32_t result_of_compare = MyStrcmp (List->data[index], *key);
 
             if (result_of_compare == COMPARE_M128_MASK)
             {
