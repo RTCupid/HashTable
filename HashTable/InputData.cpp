@@ -62,7 +62,7 @@ bool InputBinaryFile (array_my_key_t* array_pointers, const char* namefile)
         exit (0);
     }
 
-    array_pointers->text = (char*) aligned_alloc (MAX_SIZE_WORD, (size_t) file_inf.st_size * sizeof(*array_pointers->text));
+    array_pointers->text = (char*) aligned_alloc (16, (size_t) file_inf.st_size * sizeof(*array_pointers->text));
 
     if (array_pointers->text == NULL)
     {

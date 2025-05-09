@@ -41,46 +41,36 @@ err_t LoadHashTable (hshtbl_t* hashtable, array_my_key_t* array_pointers)
         assert (index_pointer < array_pointers->number_of_pointers);
 
         uint32_t hash = 0;
+        __m128i* m128i_ptr = array_pointers->pointers[index_pointer];
 
-        asm volatile (
+        asm (
             ".intel_syntax noprefix\n\t"
 
-            "xor rax, rax\n\t"
-            "mov rax, 0xEDABC526\n\t"                            //uint32_t hash = SEED;
-            "xor rcx, rcx\n\t"                                   // rcx          = 0;
+            "mov eax, 0xEDABC526\n\t"         // hash = SEED
+            "xor ecx, ecx\n\t"                // i = 0
 
-            ".loop_MAX_SIZE_WORD_times_load:\n\t"
+            ".loop_hash:\n\t"
+            "movzx edx, byte ptr [rdi + rcx]\n\t" // edx = byte ptr [rdi + rcx]
+            "xor eax, edx\n\t"                // hash ^= data[i]
 
-            "xor rdx, rdx\n\t"
-            "movzx rdx, byte ptr [rdi + rcx * 1]\n\t"            // eax   = byte ptr [%1 + rcx * 1];
-            "xor rax, rdx\n\t"                                   // hash ^= byte ptr [%1 + rcx * 1];
+            "mov edx, eax\n\t"                // edx  = eax
+            "shl eax, 13\n\t"                 // eax  = (hash << 13)
+            "shr edx, 19\n\t"                 // edx  = (hash >> 19)
+            "or eax, edx\n\t"                 // hash = (hash << 13) | (hash >> 19)
 
-            "mov rdx, rax\n\t"                                   // eax   = hash;
+            "imul eax, 0x5bd1e995\n\t"        // hash *= 0x5bd1e995
+            "add eax, 0x165667b1\n\t"         // hash += 0x165667b1
 
-            "shl rax,  0xd\n\t"                                  // hash  = hash << 13;
-
-            "shr rdx, 19\n\t"                                    // eax   = hash >> 19;
-
-            "or   rax, rdx\n\t"                                  // hash  = (hash << 13) | (hash >> 19);
-
-            "imul rax, rax, 0x5bd1e995\n\t"                      // hash *= 0x5bd1e995;
-
-            "add  rax, 0x165667b1\n\t"                           // hash += 0x165667b1;
-
-            "inc  rcx\n\t"                                       // rcx++;
-            "cmp  rcx, 16\n\t"                                   // if (rcx < 16) {
-            "jb .loop_MAX_SIZE_WORD_times_load\n\t"               //    goto loop_MAX_SIZE_WORD_times; }
+            "inc ecx\n\t"
+            "cmp ecx, 16\n\t"                 // 16 байт = sizeof(__m128i)
+            "jb .loop_hash\n\t"
 
             ".att_syntax prefix\n\t"
 
-            : "=rax" (hash)
-            : "rdi" (array_pointers->pointers[index_pointer])
-            : "rcx", "memory", "cc", "rax", "rdx"
+            : "=a" (hash)                     // eax = hash     (output)
+            : "D" (m128i_ptr)                 // rdi = m128i_ptr (input)
+            : "rcx", "rdx", "memory", "cc"    // destroy:
         );
-
-//---------Rewrite-this-function---------------------------------------------------
-//        uint32_t hash = murmurhash3 (array_pointers->pointers[index_pointer]);
-//---------------------------------------------------------------------------------
 
         hash          = hash % (uint32_t) NBASKETS;
 
@@ -128,43 +118,37 @@ err_t RunHashTable  (hshtbl_t* hashtable, array_my_key_t* array_pointers)
         assert (index_pointer < array_pointers->number_of_pointers);
 
         uint32_t hash = 0;
+        __m128i* m128i_ptr = array_pointers->pointers[index_pointer];
 
-        asm volatile (
+        asm (
             ".intel_syntax noprefix\n\t"
-            "mov eax, 0xEDABC526\n\t"                            //uint32_t hash = SEED;
-            "xor rcx, rcx\n\t"                                   // rcx          = 0;
 
-            "loop_MAX_SIZE_WORD_times_run:\n\t"
+            "mov eax, 0xEDABC526\n\t"         // hash = SEED
+            "xor ecx, ecx\n\t"                // i = 0
 
-            "movzx edx, byte ptr [rdi + rcx * 1]\n\t"            // eax   = byte ptr [%1 + rcx * 1];
-            "xor eax, edx\n\t"                                   // hash ^= byte ptr [%1 + rcx * 1];
+            ".loop_hash_run:\n\t"
+            "movzx edx, byte ptr [rdi + rcx]\n\t" // edx = byte ptr [rdi + rcx]
+            "xor eax, edx\n\t"                // hash ^= data[i]
 
-            "mov edx, eax\n\t"                                   // eax   = hash;
+            "mov edx, eax\n\t"                // edx = eax
+            "shl eax, 13\n\t"                 // eax = (hash << 13)
+            "shr edx, 19\n\t"                 // edx = (hash >> 19)
+            "or eax, edx\n\t"                 // hash = (hash << 13) | (hash >> 19)
 
-            "shl eax,  0xd\n\t"                                  // hash  = hash << 13;
+            "imul eax, 0x5bd1e995\n\t"        // hash *= 0x5bd1e995
+            "add eax, 0x165667b1\n\t"         // hash += 0x165667b1
 
-            "shr edx, 19\n\t"                                    // eax   = hash >> 19;
-
-            "or   eax, edx\n\t"                                  // hash  = (hash << 13) | (hash >> 19);
-
-            "imul eax, eax, 0x5bd1e995\n\t"                      // hash *= 0x5bd1e995;
-
-            "add  eax, 0x165667b1\n\t"                           // hash += 0x165667b1;
-
-            "inc  rcx\n\t"                                       // rcx++;
-            "cmp  rcx, 16\n\t"                                   // if (rcx < 16) {
-            "jb loop_MAX_SIZE_WORD_times_run\n\t"               //    goto loop_MAX_SIZE_WORD_times; }
+            "inc ecx\n\t"
+            "cmp ecx, 16\n\t"                 // 16 байт = sizeof(__m128i)
+            "jb .loop_hash_run\n\t"
 
             ".att_syntax prefix\n\t"
 
-            : "=eax" (hash)
-            : "rdi" (array_pointers->pointers[index_pointer])
-            : "rcx", "memory", "cc", "eax", "edx"
+            : "=a" (hash)                     // eax = hash     (output)
+            : "D" (m128i_ptr)                 // rdi = m128i_ptr (input)
+            : "rcx", "rdx", "memory", "cc"    // destroy:
         );
 
-//---------Rewrite-this-function---------------------------------------------------
-//        uint32_t hash = murmurhash3 (array_pointers->pointers[index_pointer]);
-//---------------------------------------------------------------------------------
         hash          = hash % (uint32_t) NBASKETS;
 
         int    status = 0;

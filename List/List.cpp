@@ -10,7 +10,7 @@
 
 errlst_t ListCtor (list_t* List)
 {
-    List->data = (my_key_t*) aligned_alloc (MAX_SIZE_WORD, SIZE_LIST * sizeof (*List->data));
+    List->data = (my_key_t*) aligned_alloc (16, SIZE_LIST * sizeof (*List->data));
 
     List->next = (int*)      calloc (SIZE_LIST, sizeof (int));
 
