@@ -12,9 +12,9 @@ LINUXFLAGSDEBUG = -D _DEBUG -ggdb3 -O0 -std=c++17 -Wall -Wextra -Weffc++ \
 	-fstrict-overflow -flto-odr-type-merging -fno-omit-frame-pointer -Wlarger-than=580192 -Wstack-usage=8192 -pie -fPIE -Werror=vla \
 	-fsanitize=address,alignment,bool,bounds,enum,float-cast-overflow,float-divide-by-zero,integer-divide-by-zero,leak,$\
 	nonnull-attribute,null,object-size,return,returns-nonnull-attribute,shift,$\
-	signed-integer-overflow,undefined,unreachable,vla-bound,vptr -mavx2 -masm=intel
+	signed-integer-overflow,undefined,unreachable,vla-bound,vptr -mavx2
 
-LINUXFLAGSRELEASE = -D NDEBUG -std=c++17 -Wall -mavx2 -O3 -masm=intel
+LINUXFLAGSRELEASE = -D NDEBUG -std=c++17 -Wall -mavx2 -O3
 
 NASMFLAGS 		 = -w+orphan-labels
 
