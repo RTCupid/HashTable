@@ -46,7 +46,7 @@ const size_t   NTIMES            = 150;
 
 const uint32_t COMPARE_M128_MASK = 0x0000FFFF;
 
-const uint32_t POLYNOM           = 0x82F63B78;
+const uint64_t POLYNOM           = 0x82F63B78;
 
 typedef struct hshtbl_t
 {
@@ -70,7 +70,7 @@ err_t       CreateHashTable     (hshtbl_t* hashtable);
 
 uint32_t    murmurhash3         (const void* key);
 
-uint32_t    HashCalculator      (const void* key);
+uint64_t    HashCalculator      (const void* key);
 
 err_t       LoadHashTable       (hshtbl_t* hashtable, array_my_key_t* array_pointers);
 

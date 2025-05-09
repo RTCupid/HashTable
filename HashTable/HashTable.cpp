@@ -8,6 +8,7 @@
 #include <assert.h>
 #include <string.h>
 #include <immintrin.h>
+#include <nmmintrin.h>
 
 #include "../common/colors.h"
 #include "HashTable.h"
@@ -40,7 +41,22 @@ err_t LoadHashTable (hshtbl_t* hashtable, array_my_key_t* array_pointers)
 
         assert (index_pointer < array_pointers->number_of_pointers);
 
-        uint32_t hash = HashCalculator (array_pointers->pointers[index_pointer]);
+        uint64_t  hash  = ~0ULL;
+        uint64_t* data  = (uint64_t*) (array_pointers->pointers[index_pointer]);
+
+        asm (
+            ".intel_syntax noprefix\n\t"
+
+            "crc32 rax, qword ptr [rdi]\n\t"
+            "crc32 rax, qword ptr [rdi + 8]\n\t"
+
+            ".att_syntax prefix\n\t"
+
+            : "+a" (hash)                          // eax = hash  (output)
+            : "D" (data)                           // rdi = data  (input)
+        );
+
+        hash = ~hash;
 
         hash          = hash % (uint32_t) NBASKETS;
 
@@ -66,8 +82,8 @@ err_t LoadHashTable (hshtbl_t* hashtable, array_my_key_t* array_pointers)
         }
         else
         {
-            PRINTF_IF_FIND printf  (YEL                  "value <%s> was found in %u Basket\n" RESET, (char*) array_pointers->pointers[index_pointer], hash);
-            HASHTABLE_DBG  fprintf (hashtable->log_file, "value <%s> was found in %u Basket\n",       (char*) array_pointers->pointers[index_pointer], hash);
+            PRINTF_IF_FIND printf  (YEL                  "value <%s> was found in %lu Basket\n" RESET, (char*) array_pointers->pointers[index_pointer], hash);
+            HASHTABLE_DBG  fprintf (hashtable->log_file, "value <%s> was found in %lu Basket\n",       (char*) array_pointers->pointers[index_pointer], hash);
         }
     }
 
@@ -87,7 +103,22 @@ err_t RunHashTable  (hshtbl_t* hashtable, array_my_key_t* array_pointers)
 
         assert (index_pointer < array_pointers->number_of_pointers);
 
-        uint32_t hash = HashCalculator (array_pointers->pointers[index_pointer]);
+        uint64_t  hash  = ~0ULL;
+        uint64_t* data  = (uint64_t*) (array_pointers->pointers[index_pointer]);
+
+        asm (
+            ".intel_syntax noprefix\n\t"
+
+            "crc32 rax, qword ptr [rdi]\n\t"
+            "crc32 rax, qword ptr [rdi + 8]\n\t"
+
+            ".att_syntax prefix\n\t"
+
+            : "+a" (hash)                          // eax = hash  (output)
+            : "D" (data)                           // rdi = data  (input)
+        );
+
+        hash = ~hash;
 
         hash          = hash % (uint32_t) NBASKETS;
 
@@ -102,8 +133,8 @@ err_t RunHashTable  (hshtbl_t* hashtable, array_my_key_t* array_pointers)
         }
         else
         {
-            PRINTF_IF_FIND printf  (YEL                  "value <%s> was found in %u Basket\n" RESET, (char*) array_pointers->pointers[index_pointer], hash);
-            HASHTABLE_DBG  fprintf (hashtable->log_file, "value <%s> was found in %u Basket\n",       (char*) array_pointers->pointers[index_pointer], hash);
+            PRINTF_IF_FIND printf  (YEL                  "value <%s> was found in %lu Basket\n" RESET, (char*) array_pointers->pointers[index_pointer], hash);
+            HASHTABLE_DBG  fprintf (hashtable->log_file, "value <%s> was found in %lu Basket\n",       (char*) array_pointers->pointers[index_pointer], hash);
         }
     }
 
@@ -125,24 +156,27 @@ err_t CreateHashTable (hshtbl_t* hashtable)
 }
 
 __attribute__((noinline))
-uint32_t HashCalculator (const void* key)                                   // for __m128i
+uint64_t HashCalculator (const void* key)                                   // for __m128i
 {
-    uint64_t first_part  = *((uint64_t*) key);
-    uint64_t second_part = *((uint64_t*) key + 1);
+    const uint64_t* data = (const uint64_t*) key;
 
-    const uint32_t polynom = POLYNOM;
-    uint32_t crc = ~0U;
+    const uint64_t polynom = POLYNOM;
+    uint64_t crc = ~0U;
 
-    for (int i = 0; i < 8; i++) {
-        crc ^= (first_part >> (i * 8)) & 0xFF;
-        for (int j = 0; j < 8; j++) {
+    for (uint64_t i = 0; i < 8; i++)
+    {
+        crc ^= (data[0] >> (i * 8)) & 0xFF;
+        for (int j = 0; j < 8; j++)
+        {
             crc = (crc >> 1) ^ (polynom & -(crc & 1));
         }
     }
 
-    for (int i = 0; i < 8; i++) {
-        crc ^= (second_part >> (i * 8)) & 0xFF;
-        for (int j = 0; j < 8; j++) {
+    for (uint64_t i = 0; i < 8; i++)
+    {
+        crc ^= (data[1] >> (i * 8)) & 0xFF;
+        for (int j = 0; j < 8; j++)
+        {
             crc = (crc >> 1) ^ (polynom & -(crc & 1));
         }
     }
