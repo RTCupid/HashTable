@@ -44,32 +44,36 @@ err_t LoadHashTable (hshtbl_t* hashtable, array_my_key_t* array_pointers)
 
         asm __volatile__
         (
-            "mov %0, 0xEDABC526\n"                            //uint32_t hash = SEED;
-            "mov rcx, 16\n"                                   // rcx          = 0;
+            "mov %0, 0xEDABC526\n"                          // uint32_t hash = SEED;
+            "xor rcx, rcx\n"                                // rcx = 0;
 
-            "loop_MAX_SIZE_WORD_times_load:\n"
+            "1:\n"
 
-            "xor %0, [%1 + rcx * 1]\n"                        // hash ^= [%1 + rcx * 1];
+            "movzx eax, byte ptr [%1 + rcx * 1]\n"          // eax = byte ptr [%1 + rcx * 1]
 
-            "mov edx, %0\n"                                   // edx   = hash;
+            "xor %0, eax\n"                                 // hash ^= [%1 + rcx * 1];
 
-            "shl %0,  13\n"                                   // hash  = hash << 13;
+            "mov edx, %0\n"                                 // edx   = hash;
 
-            "shr edx, 19\n"                                   // edx   = hash >> 19;
+            "shl %0,  13\n"                                 // hash  = hash << 13;
 
-            "or   %0, edx\n"                                  // hash  = (hash << 13) | (hash >> 19);
+            "shr edx, 19\n"                                 // edx   = hash >> 19;
 
-            "imul %0, 0x5bd1e995\n"                           // hash *= 0x5bd1e995;
+            "or   %0, edx\n"                                // hash  = (hash << 13) | (hash >> 19);
 
-            "add  %0, 0x165667b1\n"                           // hash += 0x165667b1;
+            "imul %0, 0x5bd1e995\n"                         // hash *= 0x5bd1e995;
 
-            "dec  rcx\n"                                      // if (--rcx != 0)
+            "add  %0, 0x165667b1\n"                         // hash += 0x165667b1;
 
-            "jne  loop_MAX_SIZE_WORD_times_load\n"            // goto loop_MAX_SIZE_WORD_times;
+            "inc  rcx\n"                                    // rcx++
 
-            : "=r" (hash)
-            : "r" (array_pointers->pointers[index_pointer])
-            : "rcx", "edx"
+            "cmp  rcx, 16\n"                                // if (rcx != MAX_SIZE_WORD)
+
+            "jne  1b\n"                                     // goto 1b;
+
+            : "=r" (hash)                                   // %0
+            : "r" (array_pointers->pointers[index_pointer]) // %1
+            : "rax", "rcx", "edx", "memory", "cc"
         );
 
 //---------Rewrite-this-function---------------------------------------------------
