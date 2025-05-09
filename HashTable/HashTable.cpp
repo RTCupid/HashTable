@@ -44,35 +44,38 @@ err_t LoadHashTable (hshtbl_t* hashtable, array_my_key_t* array_pointers)
 
         asm volatile (
             ".intel_syntax noprefix\n\t"
-            "mov %0, 0xEDABC526\n\t"                            //uint32_t hash = SEED;
-            "xor rcx, rcx\n\t"                                  // rcx          = 0;
 
-            "loop_MAX_SIZE_WORD_times_load:\n\t"
+            "xor rax, rax\n\t"
+            "mov rax, 0xEDABC526\n\t"                            //uint32_t hash = SEED;
+            "xor rcx, rcx\n\t"                                   // rcx          = 0;
 
-            "movzx eax, byte ptr [rdi + rcx * 1]\n\t"           // eax   = byte ptr [%1 + rcx * 1];
-            "xor %0, eax\n\t"                                   // hash ^= byte ptr [%1 + rcx * 1];
+            ".loop_MAX_SIZE_WORD_times_load:\n\t"
 
-            "mov eax, %0\n\t"                                   // eax   = hash;
+            "xor rdx, rdx\n\t"
+            "movzx rdx, byte ptr [rdi + rcx * 1]\n\t"            // eax   = byte ptr [%1 + rcx * 1];
+            "xor rax, rdx\n\t"                                   // hash ^= byte ptr [%1 + rcx * 1];
 
-            "shl %0,  0xd\n\t"                                  // hash  = hash << 13;
+            "mov rdx, rax\n\t"                                   // eax   = hash;
 
-            "shr eax, 19\n\t"                                   // eax   = hash >> 19;
+            "shl rax,  0xd\n\t"                                  // hash  = hash << 13;
 
-            "or   %0, eax\n\t"                                  // hash  = (hash << 13) | (hash >> 19);
+            "shr rdx, 19\n\t"                                    // eax   = hash >> 19;
 
-            "imul %0, %0, 0x5bd1e995\n\t"                       // hash *= 0x5bd1e995;
+            "or   rax, rdx\n\t"                                  // hash  = (hash << 13) | (hash >> 19);
 
-            "add  %0, 0x165667b1\n\t"                           // hash += 0x165667b1;
+            "imul rax, rax, 0x5bd1e995\n\t"                      // hash *= 0x5bd1e995;
 
-            "inc  rcx\n\t"                                      // rcx++;
-            "cmp  rcx, 16\n\t"                                  // if (rcx < 16) {
-            "jb loop_MAX_SIZE_WORD_times_load\n\t"              //    goto loop_MAX_SIZE_WORD_times; }
+            "add  rax, 0x165667b1\n\t"                           // hash += 0x165667b1;
+
+            "inc  rcx\n\t"                                       // rcx++;
+            "cmp  rcx, 16\n\t"                                   // if (rcx < 16) {
+            "jb .loop_MAX_SIZE_WORD_times_load\n\t"               //    goto loop_MAX_SIZE_WORD_times; }
 
             ".att_syntax prefix\n\t"
 
-            : "=r" (hash)
+            : "=rax" (hash)
             : "rdi" (array_pointers->pointers[index_pointer])
-            : "rcx", "memory", "cc", "eax"
+            : "rcx", "memory", "cc", "rax", "rdx"
         );
 
 //---------Rewrite-this-function---------------------------------------------------
@@ -128,35 +131,35 @@ err_t RunHashTable  (hshtbl_t* hashtable, array_my_key_t* array_pointers)
 
         asm volatile (
             ".intel_syntax noprefix\n\t"
-            "mov %0, 0xEDABC526\n\t"                            //uint32_t hash = SEED;
-            "xor rcx, rcx\n\t"                                  // rcx          = 0;
+            "mov eax, 0xEDABC526\n\t"                            //uint32_t hash = SEED;
+            "xor rcx, rcx\n\t"                                   // rcx          = 0;
 
             "loop_MAX_SIZE_WORD_times_run:\n\t"
 
-            "movzx eax, byte ptr [rdi + rcx * 1]\n\t"           // eax   = byte ptr [%1 + rcx * 1];
-            "xor %0, eax\n\t"                                   // hash ^= byte ptr [%1 + rcx * 1];
+            "movzx edx, byte ptr [rdi + rcx * 1]\n\t"            // eax   = byte ptr [%1 + rcx * 1];
+            "xor eax, edx\n\t"                                   // hash ^= byte ptr [%1 + rcx * 1];
 
-            "mov edx, %0\n\t"                                   // edx   = hash;
+            "mov edx, eax\n\t"                                   // eax   = hash;
 
-            "shl %0,  0xd\n\t"                                  // hash  = hash << 13;
+            "shl eax,  0xd\n\t"                                  // hash  = hash << 13;
 
-            "shr edx, 19\n\t"                                   // edx   = hash >> 19;
+            "shr edx, 19\n\t"                                    // eax   = hash >> 19;
 
-            "or   %0, edx\n\t"                                  // hash  = (hash << 13) | (hash >> 19);
+            "or   eax, edx\n\t"                                  // hash  = (hash << 13) | (hash >> 19);
 
-            "imul %0, %0, 0x5bd1e995\n\t"                       // hash *= 0x5bd1e995;
+            "imul eax, eax, 0x5bd1e995\n\t"                      // hash *= 0x5bd1e995;
 
-            "add  %0, 0x165667b1\n\t"                           // hash += 0x165667b1;
+            "add  eax, 0x165667b1\n\t"                           // hash += 0x165667b1;
 
-            "inc  rcx\n\t"                                      // rcx++;
-            "cmp  rcx, 16\n\t"                                  // if (rcx < 16) {
+            "inc  rcx\n\t"                                       // rcx++;
+            "cmp  rcx, 16\n\t"                                   // if (rcx < 16) {
             "jb loop_MAX_SIZE_WORD_times_run\n\t"               //    goto loop_MAX_SIZE_WORD_times; }
 
             ".att_syntax prefix\n\t"
 
-            : "=r" (hash)
+            : "=eax" (hash)
             : "rdi" (array_pointers->pointers[index_pointer])
-            : "rcx", "edx", "memory", "cc", "eax"
+            : "rcx", "memory", "cc", "eax", "edx"
         );
 
 //---------Rewrite-this-function---------------------------------------------------
