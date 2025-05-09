@@ -49,7 +49,8 @@ err_t LoadHashTable (hshtbl_t* hashtable, array_my_key_t* array_pointers)
 
             "loop_MAX_SIZE_WORD_times_load:\n"
 
-            "xor %0, [%1 + rcx * 1]\n"                        // hash ^= [%1 + rcx * 1];
+            "movzx eax, byte ptr [%1 + rcx * 1]\n"            // eax   = byte ptr [%1 + rcx * 1];
+            "xor %0, eax\n"                                   // hash ^= byte ptr [%1 + rcx * 1];
 
             "mov edx, %0\n"                                   // edx   = hash;
 
@@ -63,9 +64,7 @@ err_t LoadHashTable (hshtbl_t* hashtable, array_my_key_t* array_pointers)
 
             "add  %0, 0x165667b1\n"                           // hash += 0x165667b1;
 
-            "dec  rcx\n"                                      // if (--rcx != 0)
-
-            "jne  loop_MAX_SIZE_WORD_times_load\n"            // goto loop_MAX_SIZE_WORD_times;
+            "loop loop_MAX_SIZE_WORD_times_load\n"            // if (--rcx != 0) goto loop_MAX_SIZE_WORD_times;
 
             : "=r" (hash)
             : "r" (array_pointers->pointers[index_pointer])
