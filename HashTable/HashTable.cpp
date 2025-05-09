@@ -40,37 +40,7 @@ err_t LoadHashTable (hshtbl_t* hashtable, array_my_key_t* array_pointers)
 
         assert (index_pointer < array_pointers->number_of_pointers);
 
-        uint32_t hash = 0;
-        __m128i* m128i_ptr = array_pointers->pointers[index_pointer];
-
-        asm (
-            ".intel_syntax noprefix\n\t"
-
-            "mov eax, 0xEDABC526\n\t"         // hash = SEED
-            "xor ecx, ecx\n\t"                // i = 0
-
-            ".loop_hash:\n\t"
-            "movzx edx, byte ptr [rdi + rcx]\n\t" // edx = byte ptr [rdi + rcx]
-            "xor eax, edx\n\t"                // hash ^= data[i]
-
-            "mov edx, eax\n\t"                // edx  = eax
-            "shl eax, 13\n\t"                 // eax  = (hash << 13)
-            "shr edx, 19\n\t"                 // edx  = (hash >> 19)
-            "or eax, edx\n\t"                 // hash = (hash << 13) | (hash >> 19)
-
-            "imul eax, 0x5bd1e995\n\t"        // hash *= 0x5bd1e995
-            "add eax, 0x165667b1\n\t"         // hash += 0x165667b1
-
-            "inc ecx\n\t"
-            "cmp ecx, 16\n\t"                 // 16 байт = sizeof(__m128i)
-            "jb .loop_hash\n\t"
-
-            ".att_syntax prefix\n\t"
-
-            : "=a" (hash)                     // eax = hash     (output)
-            : "D" (m128i_ptr)                 // rdi = m128i_ptr (input)
-            : "rcx", "rdx", "memory", "cc"    // destroy:
-        );
+        uint32_t hash = HashCalculator (array_pointers->pointers[index_pointer]);
 
         hash          = hash % (uint32_t) NBASKETS;
 
@@ -117,37 +87,7 @@ err_t RunHashTable  (hshtbl_t* hashtable, array_my_key_t* array_pointers)
 
         assert (index_pointer < array_pointers->number_of_pointers);
 
-        uint32_t hash = 0;
-        __m128i* m128i_ptr = array_pointers->pointers[index_pointer];
-
-        asm (
-            ".intel_syntax noprefix\n\t"
-
-            "mov eax, 0xEDABC526\n\t"         // hash = SEED
-            "xor ecx, ecx\n\t"                // i = 0
-
-            ".loop_hash_run:\n\t"
-            "movzx edx, byte ptr [rdi + rcx]\n\t" // edx = byte ptr [rdi + rcx]
-            "xor eax, edx\n\t"                // hash ^= data[i]
-
-            "mov edx, eax\n\t"                // edx = eax
-            "shl eax, 13\n\t"                 // eax = (hash << 13)
-            "shr edx, 19\n\t"                 // edx = (hash >> 19)
-            "or eax, edx\n\t"                 // hash = (hash << 13) | (hash >> 19)
-
-            "imul eax, 0x5bd1e995\n\t"        // hash *= 0x5bd1e995
-            "add eax, 0x165667b1\n\t"         // hash += 0x165667b1
-
-            "inc ecx\n\t"
-            "cmp ecx, 16\n\t"                 // 16 байт = sizeof(__m128i)
-            "jb .loop_hash_run\n\t"
-
-            ".att_syntax prefix\n\t"
-
-            : "=a" (hash)                     // eax = hash     (output)
-            : "D" (m128i_ptr)                 // rdi = m128i_ptr (input)
-            : "rcx", "rdx", "memory", "cc"    // destroy:
-        );
+        uint32_t hash = HashCalculator (array_pointers->pointers[index_pointer]);
 
         hash          = hash % (uint32_t) NBASKETS;
 
@@ -182,6 +122,32 @@ err_t CreateHashTable (hshtbl_t* hashtable)
     }
 
     return OK;
+}
+
+__attribute__((noinline))
+uint32_t HashCalculator (const void* key)                                   // for __m128i
+{
+    uint64_t first_part  = *((uint64_t*) key);
+    uint64_t second_part = *((uint64_t*) key + 1);
+
+    const uint32_t polynom = POLYNOM;
+    uint32_t crc = ~0U;
+
+    for (int i = 0; i < 8; i++) {
+        crc ^= (first_part >> (i * 8)) & 0xFF;
+        for (int j = 0; j < 8; j++) {
+            crc = (crc >> 1) ^ (polynom & -(crc & 1));
+        }
+    }
+
+    for (int i = 0; i < 8; i++) {
+        crc ^= (second_part >> (i * 8)) & 0xFF;
+        for (int j = 0; j < 8; j++) {
+            crc = (crc >> 1) ^ (polynom & -(crc & 1));
+        }
+    }
+
+    return ~crc;
 }
 
 __attribute__((noinline))

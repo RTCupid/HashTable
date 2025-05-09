@@ -42,7 +42,7 @@ err_t PrintList (list_t list)
 {
     for (size_t index = 0; list.next[index] != -1;)
     {
-        fprintf (stderr, CYN "list.data[%lu] = %s\n" RESET, index, (char*) list.data + index);
+        fprintf (stderr, CYN "list.data[%lu] = %s\n" RESET, index, (char*)&(list.data[index]));
 
         if (list.next[index] == 0)
         {
