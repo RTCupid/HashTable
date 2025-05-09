@@ -40,7 +40,41 @@ err_t LoadHashTable (hshtbl_t* hashtable, array_my_key_t* array_pointers)
 
         assert (index_pointer < array_pointers->number_of_pointers);
 
-        uint32_t hash = murmurhash3 (array_pointers->pointers[index_pointer]);
+        uint32_t hash = 0;
+
+        asm __volatile__
+        (
+            "mov %0, 0xEDABC526\n"                            //uint32_t hash = SEED;
+            "mov rcx, 16\n"                                   // rcx          = 0;
+
+            "loop_MAX_SIZE_WORD_times_load:\n"
+
+            "xor %0, [%1 + rcx * 1]\n"                        // hash ^= [%1 + rcx * 1];
+
+            "mov edx, %0\n"                                   // edx   = hash;
+
+            "shl %0,  13\n"                                   // hash  = hash << 13;
+
+            "shr edx, 19\n"                                   // edx   = hash >> 19;
+
+            "or   %0, edx\n"                                  // hash  = (hash << 13) | (hash >> 19);
+
+            "imul %0, 0x5bd1e995\n"                           // hash *= 0x5bd1e995;
+
+            "add  %0, 0x165667b1\n"                           // hash += 0x165667b1;
+
+            "dec  rcx\n"                                      // if (--rcx != 0)
+
+            "jne  loop_MAX_SIZE_WORD_times_load\n"            // goto loop_MAX_SIZE_WORD_times;
+
+            : "=r" (hash)
+            : "r" (array_pointers->pointers[index_pointer])
+            : "rcx", "edx"
+        );
+
+//---------Rewrite-this-function---------------------------------------------------
+//        uint32_t hash = murmurhash3 (array_pointers->pointers[index_pointer]);
+//---------------------------------------------------------------------------------
 
         hash          = hash % (uint32_t) NBASKETS;
 
@@ -94,7 +128,7 @@ err_t RunHashTable  (hshtbl_t* hashtable, array_my_key_t* array_pointers)
             "mov %0, 0xEDABC526\n"                            //uint32_t hash = SEED;
             "mov rcx, 16\n"                                   // rcx          = 0;
 
-            "loop_MAX_SIZE_WORD_times:\n"
+            "loop_MAX_SIZE_WORD_times_run:\n"
 
             "xor %0, [%1 + rcx * 1]\n"                        // hash ^= [%1 + rcx * 1];
 
@@ -112,7 +146,7 @@ err_t RunHashTable  (hshtbl_t* hashtable, array_my_key_t* array_pointers)
 
             "dec  rcx\n"                                      // if (--rcx != 0)
 
-            "jne  loop_MAX_SIZE_WORD_times\n"                 // goto loop_MAX_SIZE_WORD_times;
+            "jne  loop_MAX_SIZE_WORD_times_run\n"                 // goto loop_MAX_SIZE_WORD_times;
 
             : "=r" (hash)
             : "r" (array_pointers->pointers[index_pointer])
