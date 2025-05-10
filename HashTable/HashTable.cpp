@@ -47,13 +47,13 @@ err_t LoadHashTable (hshtbl_t* hashtable, array_my_key_t* array_pointers)
         asm (
             ".intel_syntax noprefix\n\t"
 
-            "crc32 rax, qword ptr [rdi]\n\t"
-            "crc32 rax, qword ptr [rdi + 8]\n\t"
+            "crc32 rax, qword ptr [rdi]\n\t"        //; hash = _mm_crc32_u64 (hash, data[0])
+            "crc32 rax, qword ptr [rdi + 8]\n\t"    //; hash = _mm_crc32_u64 (hash, data[1])
 
             ".att_syntax prefix\n\t"
 
-            : "+a" (hash)                          // eax = hash  (output)
-            : "D" (data)                           // rdi = data  (input)
+            : "+a" (hash)                           //; eax = hash  (output)
+            : "D" (data)                            //; rdi = data  (input)
         );
 
         hash = ~hash;
@@ -109,13 +109,13 @@ err_t RunHashTable  (hshtbl_t* hashtable, array_my_key_t* array_pointers)
         asm (
             ".intel_syntax noprefix\n\t"
 
-            "crc32 rax, qword ptr [rdi]\n\t"
-            "crc32 rax, qword ptr [rdi + 8]\n\t"
+            "crc32 rax, qword ptr [rdi]\n\t"        //; hash = _mm_crc32_u64 (hash, data[0])
+            "crc32 rax, qword ptr [rdi + 8]\n\t"    //; hash = _mm_crc32_u64 (hash, data[1])
 
             ".att_syntax prefix\n\t"
 
-            : "+a" (hash)                          // eax = hash  (output)
-            : "D" (data)                           // rdi = data  (input)
+            : "+a" (hash)                           //; eax = hash  (output)
+            : "D" (data)                            //; rdi = data  (input)
         );
 
         hash = ~hash;
